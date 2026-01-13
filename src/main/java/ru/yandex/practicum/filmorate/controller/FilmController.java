@@ -24,21 +24,27 @@ public class FilmController {
         if (film.getName() == null || film.getName().isBlank()) {
             throw new RuntimeException("Укажите имя фильма");
         }
+
         if (film.getDescription() == null || film.getDescription().isBlank()) {
             throw new RuntimeException("Укажите описание фильма");
         }
+
         if (film.getDescription().length() > 200) {
             throw new RuntimeException("описание не может быть больше 200 символов");
         }
+
         if (film.getReleaseDate() == null) {
             throw new RuntimeException("Укажите дату релиза");
         }
+
         if (film.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) {
             throw new RuntimeException("Укажите корректную дату");
         }
+
         if (film.getDuration() == null) {
             throw new RuntimeException("Укажите продолжительность фильма");
         }
+
         film.setId(getNextId());
         filmHashMap.put(film.getId(), film);
         return film;
@@ -49,26 +55,33 @@ public class FilmController {
         if (!filmHashMap.containsKey(film.getId())) {
             throw new RuntimeException("фильм не найден");
         }
+
         Film oldFilm = filmHashMap.get(film.getId());
         // Валидация + обновление полей
         if (film.getName() == null || film.getName().isBlank()) {
             throw new RuntimeException("Укажите имя фильма");
         }
+
         if (film.getDescription() == null || film.getDescription().isBlank()) {
             throw new RuntimeException("Укажите описание фильма");
         }
+
         if (film.getDescription().length() > 200) {
             throw new RuntimeException("описание не может быть больше 200 символов");
         }
+
         if (film.getReleaseDate() == null) {
             throw new RuntimeException("Укажите дату релиза");
         }
+
         if (film.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) {
             throw new RuntimeException("Укажите корректную дату");
         }
+
         if (film.getDuration() == null) {
             throw new RuntimeException("Укажите продолжительность фильма");
         }
+
         oldFilm.setName(film.getName());
         oldFilm.setDescription(film.getDescription());
         oldFilm.setReleaseDate(film.getReleaseDate());
