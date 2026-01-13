@@ -22,27 +22,28 @@ public class FilmController {
     @PostMapping
     public Film addFilm(@RequestBody Film film) {
 
-        if(film.getName() == null || film.getName().isBlank()) {
+        if (film.getName() == null || film.getName().isBlank()) {
             throw new RuntimeException("Укажите имя фильма");
         }
 
-        if(film.getDescription() == null || film.getDescription().isBlank()) {
+        if (film.getDescription() == null || film.getDescription().isBlank()) {
             throw  new RuntimeException("Укажите описание фильма");
 
         } else if (film.getDescription().length() > 200) {
             throw new RuntimeException("описание не может быть больше 200 символов");
         }
 
-        if(film.getReleaseDate() == null) {
+        if (film.getReleaseDate() == null) {
             throw  new RuntimeException("Укажите дату релиза");
 
         } else if (film.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) {
             throw new RuntimeException("Укажите корректную дату");
         }
 
-        if(film.getDuration() == null) {
+        if (film.getDuration() == null) {
             throw new RuntimeException("Укажите продолжительность фильма");
         }
+
         film.setId(getNextId());
         filmHashMap.put(film.getId(), film);
         return film;
@@ -52,25 +53,25 @@ public class FilmController {
     public Film updateFilm(@RequestBody Film film) {
         Film oldFilm = null;
         if (filmHashMap.containsKey(film.getId())) {
-            if(film.getName() == null || film.getName().isBlank()) {
+            if (film.getName() == null || film.getName().isBlank()) {
                 throw new RuntimeException("Укажите имя фильма");
             }
 
-            if(film.getDescription() == null || film.getDescription().isBlank()) {
+            if (film.getDescription() == null || film.getDescription().isBlank()) {
                 throw  new RuntimeException("Укажите описание фильма");
 
             } else if (film.getDescription().length() > 200) {
                 throw new RuntimeException("описание не может быть больше 200 символов");
             }
 
-            if(film.getReleaseDate() == null) {
+            if (film.getReleaseDate() == null) {
                 throw  new RuntimeException("Укажите дату релиза");
 
             } else if (film.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) {
                 throw new RuntimeException("Укажите корректную дату");
             }
 
-            if(film.getDuration() == null) {
+            if (film.getDuration() == null) {
                 throw new RuntimeException("Укажите продолжительность фильма");
             }
             oldFilm = filmHashMap.get(film.getId());

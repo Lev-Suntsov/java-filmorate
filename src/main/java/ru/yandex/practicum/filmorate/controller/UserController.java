@@ -28,9 +28,10 @@ public class UserController {
         }
         if (user.getLogin() == null || user.getLogin().isBlank()) {
             throw new RuntimeException("Логин должен быть указан");
-        }else if (user.getLogin().contains(" ")) {
+        } else if (user.getLogin().contains(" ")) {
             throw new RuntimeException("извините, логин не может содержать пробелы");
         }
+
         if (user.getName() == null || user.getName().isBlank()) {
             user.setName(user.getLogin());
         } else {
@@ -52,9 +53,10 @@ public class UserController {
         if (userMap.containsKey(user.getId())) {
             if (user.getBirthday() == null) {
                 throw new RuntimeException("Поле дня рождения должно быть заполнено");
-            }else if (user.getBirthday().isAfter(LocalDate.now())) {
+            } else if (user.getBirthday().isAfter(LocalDate.now())) {
                 throw  new RuntimeException("День рождения не может быть в будущем");
             }
+
             if (user.getLogin() == null || user.getLogin().isBlank()) {
                 throw new RuntimeException("Логин должен быть указан");
             } else if (user.getLogin().contains(" ")) {
@@ -86,5 +88,5 @@ public class UserController {
                 .orElse(0);
         return ++currentMaxId;
     }
+
 }
- 
