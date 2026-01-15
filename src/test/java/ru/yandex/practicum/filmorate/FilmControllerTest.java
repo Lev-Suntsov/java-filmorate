@@ -15,13 +15,13 @@ public class FilmControllerTest {
     Film film;
 
     @BeforeEach
-    public void setController(){
+    public void setController() {
         controller = new FilmController();
         film = new Film();
     }
 
     @Test
-    public void addFilmTest(){
+    public void addFilmTest() {
        RuntimeException exception = assertThrows(RuntimeException.class, () -> controller.addFilm(film));
        assertEquals(exception.getMessage(), "Укажите имя фильма");
 
