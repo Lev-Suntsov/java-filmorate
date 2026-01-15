@@ -14,14 +14,14 @@ public class UserControllerTest {
     UserController controller;
 
     @BeforeEach
-    void create(){
+    void create() {
          controller = new UserController();
         user = new User();
         user.setName("");
     }
 
     @Test
-    public void addUserTest(){
+    public void addUserTest() {
         user.setName("Лев");
         user.setEmail("leviksun.s@gmail.com");
         user.setLogin("leviksun.s@gmail.com");
@@ -32,7 +32,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void addUserIfNameNull(){
+    public void addUserIfNameNull() {
         user.setEmail("leviksun.s@gmail.com");
         user.setLogin("leviksun.s@gmail.com");
         user.setBirthday(LocalDate.of(2003, 8, 8));
@@ -43,7 +43,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void addUserIfEmailNotCorrect(){
+    public void addUserIfEmailNotCorrect() {
         user.setName("Лев");
         user.setEmail("leviksun.sgmail.com");
         user.setLogin("leviksun.s@gmail.com");
@@ -52,7 +52,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void addUserIfBirthdayNotCorrect(){
+    public void addUserIfBirthdayNotCorrect() {
         user.setName("Лев");
         user.setEmail("leviksun.s@gmail.com");
         user.setLogin("leviksun.s@gmail.com");
@@ -62,7 +62,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void addUserIfLoginNotCorrect(){
+    public void addUserIfLoginNotCorrect() {
         user.setName("Лев");
         user.setEmail("leviksun.s@gmail.com");
         user.setBirthday(LocalDate.of(2003, 8, 8));
@@ -75,7 +75,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void updateUserTest(){
+    public void updateUserTest() {
         user.setName("Лев");
         user.setEmail("leviksun.s@gmail.com");
         user.setLogin("leviksun.s@gmail.com");
