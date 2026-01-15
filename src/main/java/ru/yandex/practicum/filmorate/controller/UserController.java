@@ -11,7 +11,7 @@ import java.util.HashMap;
 
 @RestController
 public class UserController {
-    private  final HashMap<Integer, User> userMap = new HashMap<>();
+    private final HashMap<Integer, User> userMap = new HashMap<>();
     private final  Logger log = LoggerFactory.getLogger(RuntimeException.class);
 
     @GetMapping
