@@ -1,6 +1,6 @@
 package ru.yandex.practicum.filmorate;
 
-import model.User;
+import ru.yandex.practicum.filmorate.model.User;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 import ru.yandex.practicum.filmorate.controller.UserController;

@@ -1,6 +1,6 @@
 package ru.yandex.practicum.filmorate.controller;
 
-import model.User;
+import ru.yandex.practicum.filmorate.model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
@@ -12,10 +12,10 @@ import java.util.HashMap;
 @RestController
 public class UserController {
     private final HashMap<Integer, User> userMap = new HashMap<>();
-    private final  Logger log = LoggerFactory.getLogger(RuntimeException.class);
+    private final Logger log = LoggerFactory.getLogger(RuntimeException.class);
 
     @GetMapping
-    public  Collection<User> getUsers() {
+    public Collection<User> getUsers() {
         return userMap.values();
     }
 
@@ -24,7 +24,7 @@ public class UserController {
         if (user.getBirthday() == null) {
             throw new RuntimeException("Поле дня рождения должно быть заполнено");
         } else if (user.getBirthday().isAfter(LocalDate.now())) {
-            throw  new RuntimeException("День рождения не может быть в будущем");
+            throw new RuntimeException("День рождения не может быть в будущем");
         }
         if (user.getLogin() == null || user.getLogin().isBlank()) {
             throw new RuntimeException("Логин должен быть указан");
@@ -54,7 +54,7 @@ public class UserController {
             if (user.getBirthday() == null) {
                 throw new RuntimeException("Поле дня рождения должно быть заполнено");
             } else if (user.getBirthday().isAfter(LocalDate.now())) {
-                throw  new RuntimeException("День рождения не может быть в будущем");
+                throw new RuntimeException("День рождения не может быть в будущем");
             }
 
             if (user.getLogin() == null || user.getLogin().isBlank()) {
