@@ -1,6 +1,5 @@
 package ru.yandex.practicum.filmorate.controller;
 
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
@@ -14,7 +13,7 @@ import java.util.HashMap;
 @RestController
 public class FilmController {
     private final HashMap<Integer, Film> filmHashMap = new HashMap<>();
-    private final Logger log = LoggerFactory.getLogger(RuntimeException.class);
+    private final Logger log = LoggerFactory.getLogger(FilmController.class);
 
     @GetMapping("/films")
     public Collection<Film> getFilms() {
@@ -45,6 +44,10 @@ public class FilmController {
 
         if (film.getDuration() == null) {
             throw new RuntimeException("Укажите продолжительность фильма");
+        }
+
+        if (film.getDuration() == null || film.getDuration().isNegative() || film.getDuration().isZero()) {
+            throw new RuntimeException("Продолжительность фильма должна быть положительной");
         }
 
         film.setId(getNextId());
@@ -82,6 +85,10 @@ public class FilmController {
 
         if (film.getDuration() == null) {
             throw new RuntimeException("Укажите продолжительность фильма");
+        }
+
+        if (film.getDuration() == null || film.getDuration().isNegative() || film.getDuration().isZero()) {
+            throw new RuntimeException("Продолжительность фильма должна быть положительной");
         }
 
         oldFilm.setName(film.getName());
