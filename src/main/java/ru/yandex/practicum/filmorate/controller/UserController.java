@@ -14,12 +14,12 @@ public class UserController {
     private final HashMap<Integer, User> userMap = new HashMap<>();
     private final Logger log = LoggerFactory.getLogger(RuntimeException.class);
 
-    @GetMapping
+    @GetMapping("/users")
     public Collection<User> getUsers() {
         return userMap.values();
     }
 
-    @PostMapping
+    @PostMapping("/users")
     public User addUser(@RequestBody User user) {
         if (user.getBirthday() == null) {
             throw new RuntimeException("Поле дня рождения должно быть заполнено");
@@ -47,7 +47,7 @@ public class UserController {
         return user;
     }
 
-    @PutMapping
+    @PutMapping("/users")
     public User updateUser(@RequestBody User user) {
         User oldUser;
         if (userMap.containsKey(user.getId())) {

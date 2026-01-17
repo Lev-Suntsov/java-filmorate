@@ -1,9 +1,11 @@
 package ru.yandex.practicum.filmorate.controller;
 
-import ru.yandex.practicum.filmorate.model.Film;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.model.Film;
+
 
 import java.time.LocalDate;
 import java.util.Collection;
@@ -14,12 +16,12 @@ public class FilmController {
     private final HashMap<Integer, Film> filmHashMap = new HashMap<>();
     private final Logger log = LoggerFactory.getLogger(RuntimeException.class);
 
-    @GetMapping
+    @GetMapping("/films")
     public Collection<Film> getFilms() {
         return filmHashMap.values();
     }
 
-    @PostMapping
+    @PostMapping("/films")
     public Film addFilm(@RequestBody Film film) {
         if (film.getName() == null || film.getName().isBlank()) {
             throw new RuntimeException("Укажите имя фильма");
@@ -50,7 +52,7 @@ public class FilmController {
         return film;
     }
 
-    @PutMapping
+    @PutMapping("/films")
     public Film updateFilm(@RequestBody Film film) {
         if (!filmHashMap.containsKey(film.getId())) {
             throw new RuntimeException("фильм не найден");
