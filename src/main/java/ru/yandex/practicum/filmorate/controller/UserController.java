@@ -34,8 +34,6 @@ public class UserController {
 
         if (user.getName() == null || user.getName().isBlank()) {
             user.setName(user.getLogin());
-        } else {
-            user.setName(user.getLogin());
         }
         if (user.getEmail() == null || user.getEmail().isBlank()) {
             throw new RuntimeException("Укажите email пользователя");
@@ -74,6 +72,7 @@ public class UserController {
             oldUser.setName(user.getName());
             oldUser.setBirthday(user.getBirthday());
             oldUser.setEmail(user.getEmail());
+            oldUser.setLogin(user.getLogin());
         } else {
             throw new RuntimeException("Пользователь не найден");
         }
