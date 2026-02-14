@@ -58,7 +58,7 @@ public class UserControllerTest {
         user.setEmail("leviksun.s@gmail.com");
         user.setLogin("leviksun.s@gmail.com");
         user.setBirthday(LocalDate.now().plusMonths(7));
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> controller.addUser(user));
+        ValidationException exception = assertThrows(ValidationException.class, () -> controller.addUser(user));
         assertEquals(exception.getMessage(), "День рождения не может быть в будущем");
     }
 
