@@ -5,6 +5,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.filmorate.controller.FilmController;
 
+import javax.xml.bind.ValidationException;
 import java.time.Duration;
 import java.time.LocalDate;
 
@@ -21,7 +22,7 @@ public class FilmControllerTest {
     }
 
     @Test
-    public void addFilmTest() {
+    public void addFilmTest() throws ValidationException {
        RuntimeException exception = assertThrows(RuntimeException.class, () -> controller.addFilm(film));
        assertEquals(exception.getMessage(), "Укажите имя фильма");
 
