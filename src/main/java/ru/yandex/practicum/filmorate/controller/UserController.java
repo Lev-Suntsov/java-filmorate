@@ -1,0 +1,62 @@
+package ru.yandex.practicum.filmorate.controller;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import ru.yandex.practicum.filmorate.model.User;
+import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.storage.user.UserService.UserService;
+import ru.yandex.practicum.filmorate.storage.user.UserStorage.InMemoryUserStorage;
+
+import javax.xml.bind.ValidationException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
+@RestController
+public class UserController {
+    private static final Logger logger = LoggerFactory.getLogger(UserController.class);
+    InMemoryUserStorage userStorage = new InMemoryUserStorage();
+    UserService service = new UserService();
+
+    @GetMapping("/users")
+    public Collection<User> getUsers() {
+        logger.info("получаем список пользователей");
+        return userStorage.getUsers();
+    }
+
+    @PostMapping("/users")
+    public User addUser(@RequestBody User user) throws ValidationException {
+        logger.info("добавляем информацию о пользователе");
+        return userStorage.addUser(user);
+    }
+
+    @PutMapping("/users")
+    public User updateUser(@RequestBody User user) throws ValidationException {
+        logger.info("Обновляем информацию");
+        return userStorage.updateUser(user);
+    }
+
+    @GetMapping("/users/{id}")
+    public User getUserById(@RequestParam("{id") int id) {
+        logger.info("Получаем пользователя по id");
+        return userStorage.getUserById(id);
+    }
+
+    @PutMapping("/users/{id}/friends/{friendId}")
+    public ArrayList<User> addFriend(@PathVariable("id") int userId, @PathVariable("friendId") int friendId) {
+        logger.info("Добавляем пользователя в друзья");
+        return service.addFriend(userId, friendId);
+    }
+
+    @DeleteMapping("/users/{id}/friends/{friendId}")
+    public List<User> deleteUserFromFriendsList(@PathVariable("id") int userId, @PathVariable("friendId") int friendId) {
+        logger.info("Удаляем пользователя из друзей");
+        return  service.deleteUserFromFriendsList(userId, friendId);
+    }
+
+    @GetMapping("/users/{id}/friends/common/{otherId}")
+    public List<User> getTogetherFriends(@PathVariable("id") int id,@PathVariable("otherId") int otherId) {
+        logger.info("Получаем список общих друзей");
+        return service.getTogetherFriends(id, otherId);
+    }
+}
