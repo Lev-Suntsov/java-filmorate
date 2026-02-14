@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 import ru.yandex.practicum.filmorate.controller.UserController;
 
+import javax.xml.bind.ValidationException;
 import java.time.LocalDate;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -21,7 +22,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void addUserTest() {
+    public void addUserTest() throws ValidationException {
         user.setName("Лев");
         user.setEmail("leviksun.s@gmail.com");
         user.setLogin("leviksun.s@gmail.com");
@@ -32,7 +33,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void addUserIfNameNull() {
+    public void addUserIfNameNull() throws ValidationException {
         user.setEmail("leviksun.s@gmail.com");
         user.setLogin("leviksun.s@gmail.com");
         user.setBirthday(LocalDate.of(2003, 8, 8));
@@ -75,7 +76,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void updateUserTest() {
+    public void updateUserTest() throws ValidationException {
         user.setName("Лев");
         user.setEmail("leviksun.s@gmail.com");
         user.setLogin("leviksun.s@gmail.com");
