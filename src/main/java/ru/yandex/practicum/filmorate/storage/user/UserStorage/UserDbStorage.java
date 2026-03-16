@@ -60,7 +60,7 @@ public class UserDbStorage implements UserStorage {
         logger.info("Переходим к сохранению пользователя");
         User user = UserMapper.mapToUser(request);
         user = repository.saveUser(user);
-        user.setId(1L);
+        user.setId(user.getId());
         return UserMapper.mapToUserDto(user);
     }
 

@@ -16,8 +16,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 class FilmoRateApplicationTests {
 
     @Autowired
-    private UserDbStorage userStorage; // Ваше хранилище
-
+    private UserDbStorage userStorage;
     @Test
     void testFindUserById() throws ValidationException {
         NewUserReqest newUser = new NewUserReqest();
@@ -27,12 +26,31 @@ class FilmoRateApplicationTests {
         newUser.setBirthday(LocalDate.of(2000, 1, 1));
         newUser.setFriendsStatus("CONFIRMED");
 
-        // 2. ДЕЙСТВИЕ: Сохраняем его в базу через ваш метод
-        // Предположим, метод save возвращает пользователя с присвоенным ID
         UserDto savedUser = userStorage.addUser(newUser);
+        Long id = savedUser.getId();
+        System.out.println("TEST: saved id = " + id);
 
-        UserDto found = userStorage.getUserById(1L);
-        assertThat(found.getId()).isEqualTo(1L);
+        UserDto found = userStorage.getUserById(id);
+        System.out.println("TEST: found id  = " + found.getId());
+
+        assertThat(found.getId()).isEqualTo(id);
     }
+
+
+//    @Test
+//    void testFindUserById() throws ValidationException {
+//        NewUserReqest newUser = new NewUserReqest();
+//        newUser.setEmail("test@yandex.ru");
+//        newUser.setLogin("test_login");
+//        newUser.setName("Test Name");
+//        newUser.setBirthday(LocalDate.of(2000, 1, 1));
+//        newUser.setFriendsStatus("CONFIRMED");
+//
+//        UserDto savedUser = userStorage.addUser(newUser);
+//        Long id = savedUser.getId();
+//
+//        UserDto found = userStorage.getUserById(id);
+//        assertThat(found.getId()).isEqualTo(id);
+//    }
 }
 

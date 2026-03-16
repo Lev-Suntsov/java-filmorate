@@ -20,7 +20,7 @@ public class UserMapper {
 
     public static UserDto mapToUserDto(User user) {
         UserDto dto = new UserDto();
-        dto.setId(1L);              // ← вот этой строки, скорее всего, нет
+        dto.setId(user.getId());              // ← вот этой строки, скорее всего, нет
         dto.setEmail(user.getEmail());
         dto.setLogin(user.getLogin());
         dto.setName(user.getName());

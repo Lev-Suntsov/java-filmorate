@@ -10,12 +10,11 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-
 public class UserRepository extends BasRepository<User> {
     private static final String FIND_ALL_QUERY = "SELECT * FROM users";
     private static final String INSERT_QUERY =
-            "INSERT INTO users(id, email, login, name, birthday, friendsStatus, friendsList, LickedFilms) " +
-                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+            "INSERT INTO users(email, login, name, birthday, friendsStatus, friendsList, LickedFilms) " +
+                    "VALUES (?, ?, ?, ?, ?, ?, ?)";
     private static final String FIND_BY_ID = "SELECT * FROM users WHERE id = ?";
     private static final String UPDATE_QUERY =
             "UPDATE users SET email = ?, login = ?, name = ?, birthday = ?, friendsStatus = ? " +
@@ -30,19 +29,17 @@ public class UserRepository extends BasRepository<User> {
     }
 
     public User saveUser(User user) {
-        user.setId(1L);
-
-        update(
+        Integer id = insert(
                 INSERT_QUERY,
-                user.getId(),
                 user.getEmail(),
                 user.getLogin(),
                 user.getName(),
                 Date.valueOf(user.getBirthday()),
                 user.getFriendsStatus(),
-                0,          // friendsList
-                0           // LickedFilms
+                0,  // friendsList
+                0   // LickedFilms
         );
+        user.setId(id);
         return user;
     }
 

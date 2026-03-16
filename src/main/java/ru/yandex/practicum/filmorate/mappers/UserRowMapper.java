@@ -12,11 +12,13 @@ public class UserRowMapper implements RowMapper<User> {
     @Override
     public User mapRow(ResultSet rs, int rowNum) throws SQLException {
         User user = new User();
-        user.setFriendsStatus(rs.getString("friendsStatus"));
-        user.setLogin(rs.getString("login"));
+        user.setId(rs.getLong("id"));
         user.setEmail(rs.getString("email"));
-        user.setBirthday(rs.getDate("birthday").toLocalDate());
+        user.setLogin(rs.getString("login"));
         user.setName(rs.getString("name"));
+        user.setBirthday(rs.getDate("birthday").toLocalDate());
+        user.setFriendsStatus(rs.getString("friendsStatus"));
         return user;
     }
 }
+

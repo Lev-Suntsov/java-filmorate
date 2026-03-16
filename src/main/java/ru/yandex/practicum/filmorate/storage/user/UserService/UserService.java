@@ -28,12 +28,6 @@ public class UserService {
         }
 
         friends.get(user).add(friend);
-
-        if (!friends.containsKey(friend)) {
-            friends.put(friend, new ArrayList<>());
-        }
-
-        friends.get(friend).add(user);
         return new ArrayList<>(friends.get(user));
     }
 
