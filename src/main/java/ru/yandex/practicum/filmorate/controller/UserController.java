@@ -40,13 +40,13 @@ public class UserController {
     }
 
     @PutMapping("/users")
-    public UserDto updateUser(@RequestBody UpdateUserReqest user, @RequestBody Long id) throws ValidationException {
+    public UserDto updateUser(@PathVariable long id, @RequestBody UpdateUserReqest user) throws ValidationException {
         logger.info("Обновляем информацию");
         return userStorage.updateUser(id, user);
     }
 
     @GetMapping("/users/{id}")
-    public UserDto getUserById(@RequestParam("{id}") int id) {
+    public UserDto getUserById(@PathVariable int id) {
         logger.info("Получаем пользователя по id");
         return userStorage.getUserById(id);
     }
@@ -61,6 +61,12 @@ public class UserController {
     public List<UserDto> deleteUserFromFriendsList(@PathVariable("id") int userId, @PathVariable("friendId") int friendId) {
         logger.info("Удаляем пользователя из друзей");
         return  service.deleteUserFromFriendsList(userId, friendId);
+    }
+
+    @GetMapping("/users/{id}/friends")
+    public List<UserDto> getFriends(@PathVariable int id) {
+        logger.info("Получаем список друзей пользователя {}", id);
+        return service.getFriends(id);
     }
 
     @GetMapping("/users/{id}/friends/common/{otherId}")
