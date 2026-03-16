@@ -1,0 +1,33 @@
+package ru.yandex.practicum.filmorate.controller;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import ru.yandex.practicum.filmorate.dto.GenreDto;
+import ru.yandex.practicum.filmorate.storage.Genre.GenreService;
+
+import java.util.List;
+
+@RestController
+public class GenerController {
+    private static final Logger log = LoggerFactory.getLogger(GenerController.class);
+    private final GenreService service;
+
+    public GenerController(GenreService genreService) {
+        this.service = genreService;
+    }
+
+    @GetMapping("/genres")
+    public List<GenreDto> getAll() {
+        log.info("получаем список всех жанров");
+        return service.getGenres();
+    }
+
+    @GetMapping("/genres/{id}")
+    public GenreDto getById(@RequestParam("{id}") int id) {
+        log.info("получаем жанр по id");
+        return service.getGenreById(id);
+    }
+}

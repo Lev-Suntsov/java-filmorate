@@ -1,9 +1,9 @@
 package ru.yandex.practicum.filmorate.storage.user.UserService;
 
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.dto.UserDto;
 import ru.yandex.practicum.filmorate.exeptions.NotFoundException;
-import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.user.UserStorage.InMemoryUserStorage;
+import ru.yandex.practicum.filmorate.storage.user.UserStorage.UserDbStorage;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -12,12 +12,16 @@ import java.util.List;
 @Service
 public class UserService {
 
-    InMemoryUserStorage userStorage = new InMemoryUserStorage();
-    HashMap<User, List<User>> friends = new HashMap<>();
+    UserDbStorage userStorage;
+    HashMap<UserDto, List<UserDto>> friends = new HashMap<>();
 
-    public ArrayList<User> addFriend(int userId, int friendId) {
-        User user = userStorage.getUserById(userId);
-        User friend = userStorage.getUserById(friendId);
+    public UserService(UserDbStorage userStorage) {
+        this.userStorage = userStorage;
+    }
+
+    public ArrayList<UserDto> addFriend(int userId, int friendId) {
+        UserDto user = userStorage.getUserById(userId);
+        UserDto friend = userStorage.getUserById(friendId);
 
         if (!friends.containsKey(user)) {
             friends.put(user, new ArrayList<>());
@@ -33,9 +37,9 @@ public class UserService {
         return new ArrayList<>(friends.get(user));
     }
 
-    public List<User> deleteUserFromFriendsList(int userId, int friendId) {
-        User user = userStorage.getUserById(userId);
-        User friend = userStorage.getUserById(friendId);
+    public List<UserDto> deleteUserFromFriendsList(int userId, int friendId) {
+        UserDto user = userStorage.getUserById(userId);
+        UserDto friend = userStorage.getUserById(friendId);
 
         if (!friends.containsKey(user)) {
             throw  new NotFoundException("у пользователя " + userId + "нет друзей");
@@ -49,9 +53,9 @@ public class UserService {
         return new ArrayList<>(friends.get(user));
     }
 
-    public List<User> getTogetherFriends(int id, int otherId) {
-        List<User> userFriends = friends.get(userStorage.getUserById(id));
-        List<User> otherFriends = friends.get(userStorage.getUserById(otherId));
+    public List<UserDto> getTogetherFriends(int id, int otherId) {
+        List<UserDto> userFriends = friends.get(userStorage.getUserById(id));
+        List<UserDto> otherFriends = friends.get(userStorage.getUserById(otherId));
 
         return userFriends.stream()
                 .filter(otherFriends::contains).toList();

@@ -3,11 +3,14 @@ package ru.yandex.practicum.filmorate.storage.film.FilmService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.dal.FilmRepository;
+import ru.yandex.practicum.filmorate.dal.UserRepository;
+import ru.yandex.practicum.filmorate.dto.FilmDto;
+import ru.yandex.practicum.filmorate.dto.UserDto;
 import ru.yandex.practicum.filmorate.exeptions.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.film.FilmStorage.InMemoryFilmStorage;
-import ru.yandex.practicum.filmorate.storage.user.UserStorage.InMemoryUserStorage;
+import ru.yandex.practicum.filmorate.storage.film.FilmStorage.FilmDbStorage;
+import ru.yandex.practicum.filmorate.storage.user.UserStorage.UserDbStorage;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,14 +19,19 @@ import java.util.List;
 @Service
 public class FilmService {
     private static final Logger logger = LoggerFactory.getLogger(FilmService.class);
-    private final HashMap<User, ArrayList<Film>> favoritFilms = new HashMap<>();
-    InMemoryUserStorage userStorage = new InMemoryUserStorage();
-    InMemoryFilmStorage filmStorage = new InMemoryFilmStorage();
+    private final HashMap<UserDto, ArrayList<FilmDto>> favoritFilms = new HashMap<>();
+    UserDbStorage userStorage;
+    FilmDbStorage filmStorage;
 
-    public ArrayList<Film> lickedFilm(int userId, int filmId) {
+    public FilmService(FilmRepository repository, UserRepository userRepository) {
+        this.filmStorage = new FilmDbStorage(repository);
+        this.userStorage = new UserDbStorage(userRepository);
+    }
+
+    public ArrayList<FilmDto> lickedFilm(long userId, long filmId) {
         logger.info("Переходим в метод для добавления фильма в понравившиеся");
-        User user = userStorage.getUserById(userId);
-        Film film = filmStorage.getFilmById(filmId);
+        UserDto user = userStorage.getUserById(userId);
+        FilmDto film =  filmStorage.getFilmById(filmId);
 
         if (!favoritFilms.containsKey(user)) {
             logger.debug("Проверяем, добавлен ли пользователь в таблицу");
@@ -37,10 +45,10 @@ public class FilmService {
         return new ArrayList<>(favoritFilms.get(user));
     }
 
-    public ArrayList<Film> deleteFilmFromFavorit(int userId, int filmId) {
+    public ArrayList<FilmDto> deleteFilmFromFavorit(int userId, int filmId) {
         logger.info("Переходим в метод удаления фильма из понравившихся ");
-        User user = userStorage.getUserById(userId);
-        Film film = filmStorage.getFilmById(filmId);
+        UserDto user = userStorage.getUserById(userId);
+        FilmDto film = filmStorage.getFilmById(filmId);
         logger.info("Проверяем, есть ли пользователя лайки");
 
         if (!favoritFilms.containsKey(user)) {

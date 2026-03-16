@@ -10,10 +10,12 @@ import java.time.LocalDate;
 @Data
 @EqualsAndHashCode(of = "id")
 public class Film {
-    private int id;
+    private long id;
     private String name;
     private String description;
     private LocalDate releaseDate;
+    private Genre genre;
+    private Mpa mpa;
 
     @JsonFormat(shape =  JsonFormat.Shape.NUMBER_INT)
     private Duration duration;
