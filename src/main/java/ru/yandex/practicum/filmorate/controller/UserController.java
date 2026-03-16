@@ -12,7 +12,6 @@ import ru.yandex.practicum.filmorate.storage.user.UserService.UserService;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage.UserDbStorage;
 
 import javax.xml.bind.ValidationException;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
