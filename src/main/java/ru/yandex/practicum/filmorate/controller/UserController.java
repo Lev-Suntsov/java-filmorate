@@ -52,7 +52,7 @@ public class UserController {
     }
 
     @PutMapping("/users/{id}/friends/{friendId}")
-    public ArrayList<UserDto> addFriend(@PathVariable("id") int userId, @PathVariable("friendId") int friendId) {
+    public List<UserDto> addFriend(@PathVariable("id") int userId, @PathVariable("friendId") int friendId) {
         logger.info("Добавляем пользователя в друзья");
         return service.addFriend(userId, friendId);
     }
