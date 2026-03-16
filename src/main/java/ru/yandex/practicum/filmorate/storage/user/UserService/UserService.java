@@ -2,7 +2,6 @@ package ru.yandex.practicum.filmorate.storage.user.UserService;
 
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.dto.UserDto;
-import ru.yandex.practicum.filmorate.exeptions.NotFoundException;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage.UserDbStorage;
 
 import java.util.ArrayList;
@@ -20,7 +19,6 @@ public class UserService {
         this.userStorage = userStorage;
     }
 
-    // Добавить в друзья (двусторонняя дружба)
     public List<UserDto> addFriend(int userId, int friendId) {
         UserDto user = userStorage.getUserById(userId);
         UserDto friend = userStorage.getUserById(friendId);
@@ -38,15 +36,14 @@ public class UserService {
         return new ArrayList<>(friends.get(user));
     }
 
-    // Удалить из друзей (двустороннее удаление)
+
     public List<UserDto> deleteUserFromFriendsList(int userId, int friendId) {
         UserDto user = userStorage.getUserById(userId);
         UserDto friend = userStorage.getUserById(friendId);
 
+        // Если нет такой дружбы — просто ничего не делаем, возвращаем текущий список
         if (!friends.containsKey(user) || !friends.get(user).contains(friend)) {
-            throw new NotFoundException(
-                    "пользователь с айди " + friendId + " не добавлен в друзья к " + userId
-            );
+            return new ArrayList<>(friends.getOrDefault(user, List.of()));
         }
 
         friends.get(user).remove(friend);
@@ -56,6 +53,7 @@ public class UserService {
 
         return new ArrayList<>(friends.get(user));
     }
+
 
     // Список друзей пользователя
     public List<UserDto> getFriends(int userId) {

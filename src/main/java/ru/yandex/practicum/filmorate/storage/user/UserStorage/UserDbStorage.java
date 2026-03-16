@@ -41,10 +41,10 @@ public class UserDbStorage implements UserStorage {
         // 2. Логин
         if (request.getLogin() == null || request.getLogin().isBlank()) {
             logger.warn("Возникло исключение - логин должен быть указан");
-            throw new RuntimeException("Логин должен быть указан");
+            throw new ValidationException("Логин должен быть указан");
         } else if (request.getLogin().contains(" ")) {
             logger.warn("Логин не может содержать пробелы");
-            throw new RuntimeException("извините, логин не может содержать пробелы");
+            throw new ValidationException("извините, логин не может содержать пробелы");
         }
 
         // 3. День рождения

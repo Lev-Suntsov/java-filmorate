@@ -39,9 +39,9 @@ public class UserController {
     }
 
     @PutMapping("/users")
-    public UserDto updateUser(@PathVariable long id, @RequestBody UpdateUserReqest user) throws ValidationException {
+    public UserDto updateUser(@RequestBody UpdateUserReqest user) throws ValidationException {
         logger.info("Обновляем информацию");
-        return userStorage.updateUser(id, user);
+        return userStorage.updateUser(user.getId(), user);
     }
 
     @GetMapping("/users/{id}")
