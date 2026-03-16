@@ -9,11 +9,14 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Mpa;
 
+import javax.xml.bind.ValidationException;
+import java.time.LocalDate;
+
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class FilmMapper {
     static final Logger logger = LoggerFactory.getLogger(FilmMapper.class);
 
-    public static Film mapToFilm(NewFilmRequest request) {
+    public static Film mapToFilm(NewFilmRequest request) throws ValidationException {
         Film film = new Film();
         film.setName(request.getName());
         film.setDescription(request.getDescription());
@@ -35,6 +38,55 @@ public class FilmMapper {
                             .toList()
             );
         }
+        return film;
+    }
+
+    public static Film updateFilm(Film film, UpdateFilmRequest request) throws ValidationException {
+
+        if (request.hasName()) {
+            film.setName(request.getName());
+        }
+
+        if (request.hasDescription()) {
+            film.setDescription(request.getDescription());
+        }
+
+        if (request.hasReleaseDate()) {
+            film.setReleaseDate(request.getReleaseDate());
+        }
+
+        if (request.hasDuration()) {
+            film.setDuration(request.getDuration());
+        }
+
+        if (request.hasMpa()) {
+            film.setMpa(Mpa.fromId(request.getMpaId()));
+        }
+
+        if (request.hasGenre()) {
+            film.setGenres(
+                    request.getGenreIds().stream()
+                            .map(Integer::intValue)
+                            .map(Genre::fromId)
+                            .toList()
+            );
+        }
+
+        // Валидации из ТЗ
+        if (film.getDescription() != null && film.getDescription().length() > 200) {
+            throw new ValidationException("описание не может быть больше 200 символов");
+        }
+
+        if (film.getReleaseDate() != null
+                && film.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) {
+            throw new ValidationException("Укажите корректную дату релиза");
+        }
+
+        if (film.getDuration() == null
+                || film.getDuration().isNegative()
+                || film.getDuration().isZero()) {
+            throw new ValidationException("Продолжительность фильма должна быть положительной");
+        }
 
         return film;
     }
@@ -54,7 +106,7 @@ public class FilmMapper {
             dto.setMpa(mpaDto);
         }
 
-        if (film.getGenre() != null) { // <-- тоже plural
+        if (film.getGenres() != null) {
             dto.setGenres(
                     film.getGenres().stream()
                             .map(g -> {
