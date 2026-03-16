@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.dto;
 
 import lombok.Data;
+import ru.yandex.practicum.filmorate.model.Genre;
 
 import java.time.Duration;
 import java.time.LocalDate;
@@ -14,6 +15,8 @@ public class NewFilmRequest {
     private List<Long> genreIds; // список id жанров
     private int mpaId;           // именно id рейтинга
     private Duration duration;
+    private Integer genreId;
+    private List<Genre> genres;
 
     public boolean hasName() {
         return name != null && !name.isBlank();

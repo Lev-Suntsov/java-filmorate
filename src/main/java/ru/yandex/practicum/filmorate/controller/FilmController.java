@@ -39,9 +39,9 @@ public class FilmController {
     }
 
     @PutMapping("/films")
-    public FilmDto updateFilm(@RequestBody UpdateFilmRequest film, @RequestBody long id) throws ValidationException {
+    public FilmDto updateFilm(@RequestBody UpdateFilmRequest film) throws ValidationException {
         logger.info("Обновляем информацию о фильме");
-        return filmStorage.updateFilm(id, film);
+        return filmStorage.updateFilm(film.getId(), film);
     }
 
     @GetMapping("/films/{id}")

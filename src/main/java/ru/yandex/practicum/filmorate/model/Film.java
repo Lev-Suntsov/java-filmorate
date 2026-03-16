@@ -6,6 +6,7 @@ import lombok.EqualsAndHashCode;
 
 import java.time.Duration;
 import java.time.LocalDate;
+import java.util.List;
 
 @Data
 @EqualsAndHashCode(of = "id")
@@ -16,6 +17,8 @@ public class Film {
     private LocalDate releaseDate;
     private Genre genre;
     private Mpa mpa;
+    private Integer genreId;
+    private List<Genre> genres;
 
     @JsonFormat(shape =  JsonFormat.Shape.NUMBER_INT)
     private Duration duration;

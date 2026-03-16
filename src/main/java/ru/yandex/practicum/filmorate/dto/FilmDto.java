@@ -11,9 +11,9 @@ public class FilmDto {
     private String name;
     private String description;
     private LocalDate releaseDate;
-    private int genreIds;
-    private int mpaId;
-    private String mpaName;
+    private java.util.List<GenreDto> genres;
+    private MpaDto mpa;
     private Duration duration;
 }
+
 
