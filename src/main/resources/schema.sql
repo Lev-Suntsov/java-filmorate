@@ -1,21 +1,21 @@
-CREATE TABLE IF NOT EXISTS users (
-    id INT NOT NULL,
-    email VARCHAR(255) NOT NULL,
-    login VARCHAR(255) NOT NULL,
-    name VARCHAR(255) NOT NULL,
-    birthday DATE NOT NULL,
-    friendsStatus VARCHAR(255) NOT NULL,
-    friendsList INT NOT NULL,
-    LickedFilms INT NOT NULL,
-    CONSTRAINT pk_user PRIMARY KEY (id)
+DROP TABLE IF EXISTS users;
+
+CREATE TABLE users (
+    id INTEGER PRIMARY KEY,
+    email VARCHAR(255),
+    login VARCHAR(255),
+    name VARCHAR(255),
+    birthday DATE,
+    friendsStatus VARCHAR(255),
+    friendsList INT,
+    LickedFilms INT
 );
 
 CREATE TABLE IF NOT EXISTS films (
-    id INT NOT NULL,
-    name VARCHAR(255) NOT NULL,
-    description VARCHAR(255) NOT NULL,
-    releaseDate DATE NOT NULL,
-    genre VARCHAR(255) NOT NULL,
-    MPA VARCHAR(255) NOT NULL,
-    CONSTRAINT pk_film PRIMARY KEY (id)
+    id INTEGER Not NULL,
+    name VARCHAR(255),
+    description VARCHAR(255),
+    releaseDate DATE,
+    genre VARCHAR(255),
+    MPA VARCHAR(255)
 );

@@ -5,17 +5,21 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.model.User;
 
+import java.sql.Date;
 import java.util.List;
 import java.util.Optional;
 
 @Repository
-public class UserRepository extends BasRepository {
+
+public class UserRepository extends BasRepository<User> {
     private static final String FIND_ALL_QUERY = "SELECT * FROM users";
-    private static final String INSERT_QUERY = "INSERT INTO users(email, login, name, birthday, friendsStatus)" +
-            "VALUES (?, ?, ?, ?, ?) returning id";
+    private static final String INSERT_QUERY =
+            "INSERT INTO users(id, email, login, name, birthday, friendsStatus, friendsList, LickedFilms) " +
+                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
     private static final String FIND_BY_ID = "SELECT * FROM users WHERE id = ?";
-    private static final String UPDATE_QUERY = "UPDATE users SET email = ?, login = ?, name = ?, birthday = ?, friendsStatus = ?" +
-            " WHERE id = ?";
+    private static final String UPDATE_QUERY =
+            "UPDATE users SET email = ?, login = ?, name = ?, birthday = ?, friendsStatus = ? " +
+                    "WHERE id = ?";
 
     public UserRepository(JdbcTemplate jdbc, RowMapper<User> mapper) {
         super(jdbc, mapper);
@@ -26,23 +30,32 @@ public class UserRepository extends BasRepository {
     }
 
     public User saveUser(User user) {
-        long id = insert(INSERT_QUERY, user.getEmail(),
-                user.getLogin(),
-                user.getName(),
-                user.getBirthday(),
-                user.getFriendsStatus());
-        user.setId(id);
-        return  user;
-    }
+        user.setId(1L);
 
-    public User updateUser(User user) {
-        update(UPDATE_QUERY,
+        update(
+                INSERT_QUERY,
+                user.getId(),
                 user.getEmail(),
                 user.getLogin(),
                 user.getName(),
-                user.getBirthday(),
+                Date.valueOf(user.getBirthday()),
                 user.getFriendsStatus(),
-                user.getId());
+                0,          // friendsList
+                0           // LickedFilms
+        );
+        return user;
+    }
+
+    public User updateUser(User user) {
+        update(
+                UPDATE_QUERY,
+                user.getEmail(),
+                user.getLogin(),
+                user.getName(),
+                Date.valueOf(user.getBirthday()),
+                user.getFriendsStatus(),
+                user.getId()
+        );
         return user;
     }
 

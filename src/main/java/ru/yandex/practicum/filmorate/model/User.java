@@ -5,13 +5,17 @@ import lombok.EqualsAndHashCode;
 
 import java.time.LocalDate;
 
+// User
 @Data
 @EqualsAndHashCode(of = "id")
 public class User {
     private long id;
     private String email;
     private String login;
-    private  String name;
+    private String name;
     private LocalDate birthday;
-    private  String friendsStatus;
+    private String friendsStatus;
+    private int friendsList;
+    private int lickedFilms;
 }
+
