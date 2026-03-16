@@ -28,27 +28,8 @@ public class UserDbStorage implements UserStorage {
     @Override
     public UserDto addUser(NewUserReqest request) throws ValidationException {
         logger.info("Переходим в метод добавления нового пользователя");
-        if (request.getBirthday() == null) {
-            logger.warn("Исключение связанное с пустым полем дня рождения");
-            throw new RuntimeException("Поле дня рождения должно быть заполнено");
-        } else if (request.getBirthday().isAfter(LocalDate.now())) {
-            logger.warn("Возникло исключение связанное с некорректной датой рождения");
-            throw new ValidationException("День рождения не может быть в будущем");
-        }
 
-        if (request.getLogin() == null || request.getLogin().isBlank()) {
-            logger.warn("Возникло исключение - логин должен быть указан");
-            throw new RuntimeException("Логин должен быть указан");
-        } else if (request.getLogin().contains(" ")) {
-            logger.warn("Логин не может содержать пробелы");
-            throw new RuntimeException("извините, логин не может содержать пробелы");
-        }
-
-        if (request.getName() == null || request.getName().isBlank()) {
-            logger.warn("ЕСли имя неуказанно, именем становится логин");
-            request.setName(request.getLogin());
-        }
-
+        // 1. Email
         if (request.getEmail() == null || request.getEmail().isBlank()) {
             logger.warn("Возникло исключение, email пользователя не указан");
             throw new RuntimeException("Укажите email пользователя");
@@ -57,12 +38,36 @@ public class UserDbStorage implements UserStorage {
             throw new ValidationException("Электронная почта указана не верно");
         }
 
+        // 2. Логин
+        if (request.getLogin() == null || request.getLogin().isBlank()) {
+            logger.warn("Возникло исключение - логин должен быть указан");
+            throw new RuntimeException("Логин должен быть указан");
+        } else if (request.getLogin().contains(" ")) {
+            logger.warn("Логин не может содержать пробелы");
+            throw new RuntimeException("извините, логин не может содержать пробелы");
+        }
+
+        // 3. День рождения
+        if (request.getBirthday() == null) {
+            logger.warn("Исключение связанное с пустым полем дня рождения");
+            throw new RuntimeException("Поле дня рождения должно быть заполнено");
+        } else if (request.getBirthday().isAfter(LocalDate.now())) {
+            logger.warn("Возникло исключение связанное с некорректной датой рождения");
+            throw new ValidationException("День рождения не может быть в будущем");
+        }
+
+        // 4. Имя
+        if (request.getName() == null || request.getName().isBlank()) {
+            logger.warn("Если имя не указано, именем становится логин");
+            request.setName(request.getLogin());
+        }
+
         logger.info("Переходим к сохранению пользователя");
         User user = UserMapper.mapToUser(request);
         user = repository.saveUser(user);
-        user.setId(user.getId());
         return UserMapper.mapToUserDto(user);
     }
+
 
     @Override
     public Collection<User> getUsers() {
