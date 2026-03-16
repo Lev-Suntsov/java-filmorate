@@ -18,7 +18,7 @@ import java.util.List;
 @RestController
 public class FilmController {
     private static final Logger logger = LoggerFactory.getLogger(FilmController.class);
-    FilmDbStorage filmStorage;
+     FilmDbStorage filmStorage;
     FilmService service;
 
     public FilmController(FilmDbStorage filmStorage, FilmService service) {
