@@ -12,12 +12,10 @@ import java.util.Optional;
 public class FilmRepository extends BasRepository {
     private static final String FIND_ALL_QUERY = "SELECT * FROM films";
     private static final String INSERT_QUERY =
-            "INSERT INTO films(name, description, releaseDate, genre, mpa, duration) " +
-                    "VALUES (?, ?, ?, ?, ?, ?)";
+            "INSERT INTO films(name, description, releaseDate, mpa, duration) VALUES (?, ?, ?, ?, ?)";
 
     private static final String UPDATE_QUERY =
-            "UPDATE films SET name = ?, description = ?, releaseDate = ?, genre = ?, mpa = ?, duration = ? " +
-                    "WHERE id = ?";
+            "UPDATE films SET name = ?, description = ?, releaseDate = ?, mpa = ?, duration = ? WHERE id = ?";
 
     private static final String FIND_BY_ID = "SELECT * FROM films WHERE id = ?";
 
@@ -34,15 +32,11 @@ public class FilmRepository extends BasRepository {
     }
 
     public Film save(Film film) {
-        Integer genreId = film.getGenres() != null && !film.getGenres().isEmpty()
-                ? film.getGenres().get(0).getId()
-                : null;
         Integer id = insert(
                 INSERT_QUERY,
                 film.getName(),
                 film.getDescription(),
                 film.getReleaseDate(),
-                genreId,
                 film.getMpa().getId(),
                 film.getDuration()
         );
@@ -50,21 +44,17 @@ public class FilmRepository extends BasRepository {
         return film;
     }
 
-
     public Film update(Film film) {
-        Integer genreId = film.getGenres() != null && !film.getGenres().isEmpty()
-                ? film.getGenres().get(0).getId()
-                : null;
         update(
                 UPDATE_QUERY,
                 film.getName(),
                 film.getDescription(),
                 film.getReleaseDate(),
-                genreId,         // или film.getGenre().getId()
                 film.getMpa().getId(),
                 film.getDuration(),
                 film.getId()
         );
         return film;
     }
+
 }
