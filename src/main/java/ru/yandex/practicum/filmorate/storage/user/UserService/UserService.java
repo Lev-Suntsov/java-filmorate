@@ -24,13 +24,9 @@ public class UserService {
         UserDto friend = userStorage.getUserById(friendId);
 
         friends.computeIfAbsent(user, u -> new ArrayList<>());
-        friends.computeIfAbsent(friend, u -> new ArrayList<>());
 
         if (!friends.get(user).contains(friend)) {
             friends.get(user).add(friend);
-        }
-        if (!friends.get(friend).contains(user)) {
-            friends.get(friend).add(user);   // вот эта строка критична
         }
 
         return new ArrayList<>(friends.get(user));
@@ -42,18 +38,14 @@ public class UserService {
         UserDto user = userStorage.getUserById(userId);
         UserDto friend = userStorage.getUserById(friendId);
 
-        // Если нет такой дружбы — просто ничего не делаем, возвращаем текущий список
-        if (!friends.containsKey(user) || !friends.get(user).contains(friend)) {
-            return new ArrayList<>(friends.getOrDefault(user, List.of()));
-        }
+        List<UserDto> userFriends = friends.getOrDefault(user, new ArrayList<>());
 
-        friends.get(user).remove(friend);
-        if (friends.containsKey(friend)) {
-            friends.get(friend).remove(user);
-        }
+        userFriends.remove(friend);              
+        friends.put(user, userFriends);
 
-        return new ArrayList<>(friends.get(user));
+        return new ArrayList<>(userFriends);
     }
+
 
 
     // Список друзей пользователя
