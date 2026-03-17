@@ -18,13 +18,13 @@ public class GenerController {
         this.service = genreService;
     }
 
-    @GetMapping("/genres")
+    @GetMapping
     public List<GenreDto> getAll() {
         log.info("получаем список всех жанров");
         return service.getGenres();
     }
 
-    @GetMapping("/genres/{id}")
+    @GetMapping("{id}")
     public GenreDto getById(@PathVariable int id) {
         log.info("получаем жанр по id");
         return service.getGenreById(id);

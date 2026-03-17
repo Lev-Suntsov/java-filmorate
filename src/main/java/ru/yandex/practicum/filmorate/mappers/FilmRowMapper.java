@@ -8,6 +8,7 @@ import ru.yandex.practicum.filmorate.model.Mpa;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 
 @Component
 public class FilmRowMapper implements RowMapper<Film> {
@@ -26,7 +27,12 @@ public class FilmRowMapper implements RowMapper<Film> {
 
         // genre: один жанр из колонки genre (int)
         int genreId = rs.getInt("genre");
-        film.setGenres(java.util.List.of(Genre.fromId(genreId)));
+        if (!rs.wasNull() && genreId > 0) {
+            film.setGenres(List.of(Genre.fromId(genreId)));
+        } else {
+            film.setGenres(List.of()); // или null
+        }
+        ;
 
         return film;
     }
