@@ -39,8 +39,7 @@ public class UserService {
         UserDto friend = userStorage.getUserById(friendId);
 
         List<UserDto> userFriends = friends.getOrDefault(user, new ArrayList<>());
-
-        userFriends.remove(friend);              
+        userFriends.remove(friend);
         friends.put(user, userFriends);
 
         return new ArrayList<>(userFriends);
