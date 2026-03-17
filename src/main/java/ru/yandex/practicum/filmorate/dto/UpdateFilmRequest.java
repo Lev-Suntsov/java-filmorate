@@ -37,6 +37,6 @@ public class UpdateFilmRequest {
     }
 
     public boolean hasDuration() {
-        return duration != null && duration > 0 && duration != 0;
+        return duration != null;
     }
 }
