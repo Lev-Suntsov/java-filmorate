@@ -21,7 +21,7 @@ class FilmoRateApplicationTests {
     @Test
     void testFindUserById() throws ValidationException {
         NewUserReqest newUser = new NewUserReqest();
-        newUser.setEmail("test@yandex.ru");
+        newUser.setEmail("testUser@yandex.ru");
         newUser.setLogin("test_login");
         newUser.setName("Test Name");
         newUser.setBirthday(LocalDate.of(2000, 1, 1));
