@@ -28,7 +28,7 @@ class FilmoRateApplicationTests {
         newUser.setFriendsStatus("CONFIRMED");
 
         UserDto savedUser = userStorage.addUser(newUser);
-        Long id = savedUser.getId();
+        Integer id = savedUser.getId();
 
         UserDto found = userStorage.getUserById(id);
         assertThat(found.getId()).isEqualTo(id);
