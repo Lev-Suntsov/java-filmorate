@@ -88,7 +88,7 @@ public class FilmMapper {
         return film;
     }
 
-        public static FilmDto mapToFilmDto (Film film){
+        public static FilmDto mapToFilmDto(Film film) {
             FilmDto dto = new FilmDto();
             dto.setId(film.getId());
             dto.setName(film.getName());
