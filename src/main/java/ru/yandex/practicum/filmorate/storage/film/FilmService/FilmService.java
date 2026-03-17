@@ -67,17 +67,17 @@ public class FilmService {
         return new ArrayList<>(favoritFilms.get(user));
     }
 
-    public List<Film> getPopularFilms(int count) {
-        logger.info("Переходим в метод получения 10 самых популярных фильмов");
+    public List<Film> getPopular(int count) {
         return filmStorage.getFilms().stream()
-                .sorted(this::compareByLikesCount)  // сортировка по лайкам
-                .limit(Math.max(count, 10))         // минимум 10
+                .map(obj -> (Film) obj)
+                .sorted(this::compareByLikesCount)   // уже готовый компаратор
+                .limit(count)
                 .toList();
     }
 
     private int compareByLikesCount(Film f1, Film f2) {
         long likes1 = favoritFilms.values().stream().filter(set -> set.contains(f1.getId())).count();
         long likes2 = favoritFilms.values().stream().filter(set -> set.contains(f2.getId())).count();
-        return Long.compare(likes2, likes1);  // убывание
+        return Long.compare(likes2, likes1); // по убыванию
     }
 }

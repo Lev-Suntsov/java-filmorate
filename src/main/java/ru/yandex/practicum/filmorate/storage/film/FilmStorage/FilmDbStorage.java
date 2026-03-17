@@ -34,7 +34,7 @@ public class FilmDbStorage implements FilmStorage {
     public FilmDto addFilm(NewFilmRequest request) throws ValidationException {
         if (request.getName() == null || request.getName().isBlank()) {
             logger.warn("Исключение, не указали название фильма");
-            throw new RuntimeException("Укажите имя фильма");
+            throw new ValidationException("Укажите имя фильма");
         }
 
         if (request.getDescription() == null || request.getDescription().isBlank()) {
