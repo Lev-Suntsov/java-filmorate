@@ -16,25 +16,32 @@ import java.time.LocalDate;
 public class FilmMapper {
     static final Logger logger = LoggerFactory.getLogger(FilmMapper.class);
 
-    // FilmMapper.mapToFilm
     public static Film mapToFilm(NewFilmRequest request) {
         Film film = new Film();
         film.setName(request.getName());
         film.setDescription(request.getDescription());
         film.setReleaseDate(request.getReleaseDate());
         film.setDuration(request.getDuration());
-        film.setMpa(Mpa.fromId(request.getMpaId()));
 
-        if (request.getGenreIds() != null) {
+
+        if (request.getMpa() == null || request.getMpa().getId() <= 0) {
+            throw new IllegalArgumentException("MPA с id=" +
+                    (request.getMpa() == null ? 0 : request.getMpa().getId()) +
+                    " не найден");
+        }
+        film.setMpa(Mpa.fromId(request.getMpa().getId()));
+
+        if (request.getGenres() != null) {
             film.setGenres(
-                    request.getGenreIds().stream()
-                            .map(Genre::fromId)
+                    request.getGenres().stream()
+                            .map(gd -> Genre.fromId(gd.getId()))
                             .toList()
             );
         }
 
         return film;
     }
+
 
     public static Film updateFilm(Film film, UpdateFilmRequest request) throws ValidationException {
 
@@ -51,71 +58,65 @@ public class FilmMapper {
         }
 
         if (request.hasMpa()) {
-            film.setMpa(Mpa.fromId(request.getMpaId()));
+            film.setMpa(Mpa.fromId(request.getMpa().getId()));
         }
 
         if (request.hasGenre()) {
             film.setGenres(
-                    request.getGenreIds().stream()
-                            .map(Integer::intValue)
-                            .map(Genre::fromId)
+                    request.getGenres().stream()
+                            .map(gd -> Genre.fromId(gd.getId()))
                             .toList()
             );
+
+            if (film.getDescription() != null && film.getDescription().length() > 200) {
+                throw new ValidationException("описание не может быть больше 200 символов");
+            }
+
+            if (film.getReleaseDate() != null
+                    && film.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) {
+                throw new ValidationException("Укажите корректную дату релиза");
+            }
+
+            // updateFilm
+            if (request.hasDuration()) {
+                film.setDuration(request.getDuration());
+            }
+            if (film.getDuration() == null || film.getDuration() <= 0) {
+                throw new ValidationException("Продолжительность фильма должна быть положительной");
+            }
         }
-
-        // Валидации из ТЗ
-        if (film.getDescription() != null && film.getDescription().length() > 200) {
-            throw new ValidationException("описание не может быть больше 200 символов");
-        }
-
-        if (film.getReleaseDate() != null
-                && film.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) {
-            throw new ValidationException("Укажите корректную дату релиза");
-        }
-
-        // updateFilm
-        if (request.hasDuration()) {
-            film.setDuration(request.getDuration());
-        }
-
-// валидация duration
-        if (film.getDuration() == null || film.getDuration() <= 0) {
-            throw new ValidationException("Продолжительность фильма должна быть положительной");
-        }
-
-
         return film;
     }
 
-    public static FilmDto mapToFilmDto(Film film) {
-        FilmDto dto = new FilmDto();
-        dto.setId(film.getId());
-        dto.setName(film.getName());
-        dto.setDescription(film.getDescription());
-        dto.setReleaseDate(film.getReleaseDate());
-        dto.setDuration(film.getDuration());
+        public static FilmDto mapToFilmDto (Film film){
+            FilmDto dto = new FilmDto();
+            dto.setId(film.getId());
+            dto.setName(film.getName());
+            dto.setDescription(film.getDescription());
+            dto.setReleaseDate(film.getReleaseDate());
+            dto.setDuration(film.getDuration());
 
 
-        if (film.getMpa() != null) {
-            MpaDto mpaDto = new MpaDto();
-            mpaDto.setId(film.getMpa().getId());
-            mpaDto.setName(film.getMpa().getName());
-            dto.setMpa(mpaDto);
+            if (film.getMpa() != null) {
+                MpaDto mpaDto = new MpaDto();
+                mpaDto.setId(film.getMpa().getId());
+                mpaDto.setName(film.getMpa().getName());
+                dto.setMpa(mpaDto);
+            }
+
+            if (film.getGenres() != null) {
+                dto.setGenres(
+                        film.getGenres().stream()
+                                .map(g -> {
+                                    GenreDto gd = new GenreDto();
+                                    gd.setId(g.getId());
+                                    gd.setName(g.getName());
+                                    return gd;
+                                })
+                                .toList()
+                );
+            }
+
+            return dto;
         }
-
-        if (film.getGenres() != null) {
-            dto.setGenres(
-                    film.getGenres().stream()
-                            .map(g -> {
-                                GenreDto gd = new GenreDto();
-                                gd.setId(g.getId());
-                                gd.setName(g.getName());
-                                return gd;
-                            })
-                            .toList()
-            );
-        }
-
-        return dto;
     }
-}

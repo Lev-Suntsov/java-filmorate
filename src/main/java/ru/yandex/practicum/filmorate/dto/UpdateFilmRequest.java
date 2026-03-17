@@ -7,13 +7,14 @@ import java.util.List;
 
 @Data
 public class UpdateFilmRequest {
-    private Integer id;
+    private int id;
     private String name;
     private String description;
     private LocalDate releaseDate;
-    private List<Integer> genreIds; // список id жанров
-    private Integer mpaId;          // именно id рейтинга
     private Integer duration;
+
+    private MpaDto mpa;
+    private List<GenreDto> genres;
 
     public boolean hasName() {
         return name != null && !name.isBlank();
@@ -28,11 +29,11 @@ public class UpdateFilmRequest {
     }
 
     public boolean hasGenre() {
-        return genreIds != null && !genreIds.isEmpty();
+        return genres != null && !genres.isEmpty();
     }
 
     public boolean hasMpa() {
-        return mpaId != null;
+        return mpa != null;
     }
 
     public boolean hasDuration() {

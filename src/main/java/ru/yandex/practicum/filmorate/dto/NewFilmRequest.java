@@ -10,9 +10,10 @@ public class NewFilmRequest {
     private String name;
     private String description;
     private LocalDate releaseDate;
-    private List<Integer> genreIds; // список id жанров
-    private int mpaId;              // id рейтинга
-    private Integer duration;           // длительность в минутах
+    private Integer duration;
+
+    private MpaDto mpa;
+    private List<GenreDto> genres;
 
     public boolean hasName() {
         return name != null && !name.isBlank();
@@ -27,7 +28,7 @@ public class NewFilmRequest {
     }
 
     public boolean hasGenre() {
-        return genreIds != null && !genreIds.isEmpty();
+        return genres != null && !genres.isEmpty();
     }
 
     public boolean hasDuration() {
