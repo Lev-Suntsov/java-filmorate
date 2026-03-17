@@ -9,7 +9,7 @@ import java.time.LocalDate;
 @Data
 @EqualsAndHashCode(of = "id")
 public class User {
-    private long id;
+    private int id;
     private String email;
     private String login;
     private String name;

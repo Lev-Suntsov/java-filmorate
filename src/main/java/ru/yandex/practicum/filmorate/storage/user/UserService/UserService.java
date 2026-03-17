@@ -30,11 +30,12 @@ public class UserService {
             friends.get(user).add(friend);
         }
         if (!friends.get(friend).contains(user)) {
-            friends.get(friend).add(user);
+            friends.get(friend).add(user);   // вот эта строка критична
         }
 
         return new ArrayList<>(friends.get(user));
     }
+
 
 
     public List<UserDto> deleteUserFromFriendsList(int userId, int friendId) {

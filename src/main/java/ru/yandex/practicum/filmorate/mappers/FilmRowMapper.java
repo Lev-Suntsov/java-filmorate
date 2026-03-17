@@ -8,21 +8,27 @@ import ru.yandex.practicum.filmorate.model.Mpa;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.Duration;
 
 @Component
 public class FilmRowMapper implements RowMapper<Film> {
     @Override
     public Film mapRow(ResultSet rs, int rowNum) throws SQLException {
         Film film = new Film();
-        film.setId(rs.getLong("id"));
+        film.setId(rs.getInt("id"));
         film.setName(rs.getString("name"));
-        film.setMpa(Mpa.fromId(rs.getInt("mpaId")));
         film.setDescription(rs.getString("description"));
-        film.setDuration(Duration.ofHours(rs.getTime("duration").getHours()).plusSeconds(rs.getTime("duration").getSeconds())
-                .plusMinutes(rs.getTime("duration").getMinutes()));
         film.setReleaseDate(rs.getDate("releaseDate").toLocalDate());
-        film.setGenre(Genre.fromId(rs.getInt("genreIds")));
+        film.setDuration(rs.getInt("duration"));
+
+        // mpa: колонка mpa (int)
+        int mpaId = rs.getInt("mpa");
+        film.setMpa(Mpa.fromId(mpaId));
+
+        // genre: один жанр из колонки genre (int)
+        int genreId = rs.getInt("genre");
+        film.setGenres(java.util.List.of(Genre.fromId(genreId)));
+
         return film;
     }
 }
+

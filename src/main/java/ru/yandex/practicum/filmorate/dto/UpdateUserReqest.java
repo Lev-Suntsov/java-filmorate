@@ -6,7 +6,7 @@ import java.time.LocalDate;
 
 @Data
 public class UpdateUserReqest {
-    private Long id;
+    private Integer id;
     private String email;
     private String login;
     private  String name;

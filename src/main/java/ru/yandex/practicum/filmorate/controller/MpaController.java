@@ -9,6 +9,7 @@ import ru.yandex.practicum.filmorate.storage.Mpa.MpaService;
 import java.util.List;
 
 @RestController
+@RequestMapping("/mpa")
 public class MpaController {
     private static final Logger log = LoggerFactory.getLogger(MpaController.class);
     private final MpaService service;
@@ -23,7 +24,7 @@ public class MpaController {
     }
 
     @GetMapping("/{id}")
-    public MpaDto getById(@RequestParam("{id}") int id) {
+    public MpaDto getById(@PathVariable int id) {
         log.info("Получаем рейтинг MPA по id={}", id);
         return service.getById(id);
     }

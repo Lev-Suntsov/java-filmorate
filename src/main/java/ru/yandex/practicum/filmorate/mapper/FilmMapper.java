@@ -16,28 +16,23 @@ import java.time.LocalDate;
 public class FilmMapper {
     static final Logger logger = LoggerFactory.getLogger(FilmMapper.class);
 
-    public static Film mapToFilm(NewFilmRequest request) throws ValidationException {
+    // FilmMapper.mapToFilm
+    public static Film mapToFilm(NewFilmRequest request) {
         Film film = new Film();
         film.setName(request.getName());
         film.setDescription(request.getDescription());
         film.setReleaseDate(request.getReleaseDate());
         film.setDuration(request.getDuration());
-
         film.setMpa(Mpa.fromId(request.getMpaId()));
-
-        if (request.hasGenre()) {
-            film.setGenre(Genre.fromId(request.getGenreId()));
-        }
-
 
         if (request.getGenreIds() != null) {
             film.setGenres(
                     request.getGenreIds().stream()
-                            .map(Long::intValue)
                             .map(Genre::fromId)
                             .toList()
             );
         }
+
         return film;
     }
 
@@ -53,10 +48,6 @@ public class FilmMapper {
 
         if (request.hasReleaseDate()) {
             film.setReleaseDate(request.getReleaseDate());
-        }
-
-        if (request.hasDuration()) {
-            film.setDuration(request.getDuration());
         }
 
         if (request.hasMpa()) {
@@ -82,11 +73,16 @@ public class FilmMapper {
             throw new ValidationException("Укажите корректную дату релиза");
         }
 
-        if (film.getDuration() == null
-                || film.getDuration().isNegative()
-                || film.getDuration().isZero()) {
+        // updateFilm
+        if (request.hasDuration()) {
+            film.setDuration(request.getDuration());
+        }
+
+// валидация duration
+        if (film.getDuration() == null || film.getDuration() <= 0) {
             throw new ValidationException("Продолжительность фильма должна быть положительной");
         }
+
 
         return film;
     }
@@ -98,6 +94,7 @@ public class FilmMapper {
         dto.setDescription(film.getDescription());
         dto.setReleaseDate(film.getReleaseDate());
         dto.setDuration(film.getDuration());
+
 
         if (film.getMpa() != null) {
             MpaDto mpaDto = new MpaDto();

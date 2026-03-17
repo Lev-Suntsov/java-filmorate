@@ -11,11 +11,15 @@ import java.util.Optional;
 @Repository
 public class FilmRepository extends BasRepository {
     private static final String FIND_ALL_QUERY = "SELECT * FROM films";
-    private static final String INSERT_QUERY = "INSERT INTO films(name, description, releaseDate, genre, mpa, duration)" +
-            "VALUES (?, ?, ?, ?, ?, ?) returning id";
+    private static final String INSERT_QUERY =
+            "INSERT INTO films(name, description, releaseDate, genre, mpa, duration) " +
+                    "VALUES (?, ?, ?, ?, ?, ?)";
+
+    private static final String UPDATE_QUERY =
+            "UPDATE films SET name = ?, description = ?, releaseDate = ?, genre = ?, mpa = ?, duration = ? " +
+                    "WHERE id = ?";
+
     private static final String FIND_BY_ID = "SELECT * FROM films WHERE id = ?";
-    private static final String UPDATE_QUERY = "UPDATE films SET name = ?, description = ?, releaseDate = ?, genre = ?, " +
-            "mpa = ?, duration = ? WHERE id = ?";
 
     public FilmRepository(JdbcTemplate jdbc, RowMapper<Film> mapper) {
         super(jdbc, mapper);
@@ -30,24 +34,37 @@ public class FilmRepository extends BasRepository {
     }
 
     public Film save(Film film) {
-        int id = insert(INSERT_QUERY, film.getDescription(),
+        Integer genreId = film.getGenres() != null && !film.getGenres().isEmpty()
+                ? film.getGenres().get(0).getId()
+                : null;
+        Integer id = insert(
+                INSERT_QUERY,
                 film.getName(),
+                film.getDescription(),
                 film.getReleaseDate(),
-                film.getGenre(),
-                film.getMpa(),
-                film.getDuration());
+                genreId,
+                film.getMpa().getId(),
+                film.getDuration()
+        );
         film.setId(id);
         return film;
     }
 
+
     public Film update(Film film) {
-        update(UPDATE_QUERY,
-                film.getDuration(),
+        Integer genreId = film.getGenres() != null && !film.getGenres().isEmpty()
+                ? film.getGenres().get(0).getId()
+                : null;
+        update(
+                UPDATE_QUERY,
                 film.getName(),
                 film.getDescription(),
-                film.getGenre(),
                 film.getReleaseDate(),
-                film.getMpa());
+                genreId,         // или film.getGenre().getId()
+                film.getMpa().getId(),
+                film.getDuration(),
+                film.getId()
+        );
         return film;
     }
 }

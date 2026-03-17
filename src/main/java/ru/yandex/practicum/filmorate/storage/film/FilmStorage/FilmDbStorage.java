@@ -62,15 +62,18 @@ public class FilmDbStorage implements FilmStorage {
             throw new RuntimeException("Укажите продолжительность фильма");
         }
 
-        if (request.getDuration() == null || request.getDuration().isNegative() || request.getDuration().isZero()) {
+        if (request.getDuration() < 0) {
             logger.warn("Ошибка валидации. Отрицательная продолжительность фильма");
             throw new ValidationException("Продолжительность фильма должна быть положительной");
         }
 
         Film film = FilmMapper.mapToFilm(request);
-
-        film = repository.save(film);
-
+        try {
+            film = repository.save(film);
+        } catch (Exception e) {
+            logger.error("Ошибка при сохранении фильма", e);
+            throw e;
+        }
         return FilmMapper.mapToFilmDto(film);
     }
 

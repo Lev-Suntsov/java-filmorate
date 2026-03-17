@@ -18,15 +18,8 @@ CREATE TABLE films (
     name VARCHAR(255),
     description VARCHAR(255),
     releaseDate DATE,
-    genre VARCHAR(255),
-    MPA VARCHAR(255)
+    genre INTEGER,
+    mpa INTEGER,
+    duration INTEGER
 );
 
-CREATE TABLE IF NOT EXISTS films (
-    id INTEGER Not NULL,
-    name VARCHAR(255),
-    description VARCHAR(255),
-    releaseDate DATE,
-    genre VARCHAR(255),
-    MPA VARCHAR(255)
-);

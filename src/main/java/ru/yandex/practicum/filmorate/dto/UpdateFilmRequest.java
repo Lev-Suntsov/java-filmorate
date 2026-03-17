@@ -2,19 +2,18 @@ package ru.yandex.practicum.filmorate.dto;
 
 import lombok.Data;
 
-import java.time.Duration;
 import java.time.LocalDate;
 import java.util.List;
 
 @Data
 public class UpdateFilmRequest {
-    private Long id;
+    private Integer id;
     private String name;
     private String description;
     private LocalDate releaseDate;
     private List<Integer> genreIds; // список id жанров
     private Integer mpaId;          // именно id рейтинга
-    private Duration duration;
+    private Integer duration;
 
     public boolean hasName() {
         return name != null && !name.isBlank();
@@ -37,6 +36,6 @@ public class UpdateFilmRequest {
     }
 
     public boolean hasDuration() {
-        return duration != null && !duration.isNegative() && !duration.isZero();
+        return duration != null && duration > 0 && duration != 0;
     }
 }
