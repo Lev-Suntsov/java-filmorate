@@ -8,6 +8,6 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class MpaDto {
-    private int id;
+    private Integer id;
     private String name;
 }

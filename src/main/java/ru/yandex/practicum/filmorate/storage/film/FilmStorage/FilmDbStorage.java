@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
+import ru.yandex.practicum.filmorate.dal.FilmGenreRepository;
 import ru.yandex.practicum.filmorate.dal.FilmRepository;
 import ru.yandex.practicum.filmorate.dto.FilmDto;
 import ru.yandex.practicum.filmorate.dto.NewFilmRequest;
@@ -10,18 +11,22 @@ import ru.yandex.practicum.filmorate.dto.UpdateFilmRequest;
 import ru.yandex.practicum.filmorate.exeptions.NotFoundException;
 import ru.yandex.practicum.filmorate.mapper.FilmMapper;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Genre;
 
 import javax.xml.bind.ValidationException;
 import java.time.LocalDate;
 import java.util.Collection;
+import java.util.List;
 
 @Repository
 public class FilmDbStorage implements FilmStorage {
     private static final Logger logger = LoggerFactory.getLogger(FilmDbStorage.class);
     FilmRepository repository;
+    FilmGenreRepository filmGenreRepository;
 
-    public FilmDbStorage(FilmRepository repository) {
+    public FilmDbStorage(FilmRepository repository, FilmGenreRepository filmGenreRepository) {
         this.repository = repository;
+        this.filmGenreRepository = filmGenreRepository;
     }
 
     @Override
@@ -74,6 +79,10 @@ public class FilmDbStorage implements FilmStorage {
             logger.error("Ошибка при сохранении фильма", e);
             throw e;
         }
+
+        List<Integer> genreIds = film.getGenres() == null ? List.of()
+                : film.getGenres().stream().map(Genre::getId).toList();
+        filmGenreRepository.saveForFilm(film.getId(), genreIds);
         return FilmMapper.mapToFilmDto(film);
     }
 
@@ -90,11 +99,17 @@ public class FilmDbStorage implements FilmStorage {
                 "фильм не найден"
         ));
         film = repository.update(film);
+        List<Integer> genreIds = film.getGenres() == null ? List.of() : film.getGenres().stream().map(Genre::getId).toList();
+        filmGenreRepository.saveForFilm(film.getId(), genreIds);
         return FilmMapper.mapToFilmDto(film);
     }
 
     @Override
     public FilmDto getFilmById(long id) {
-        return repository.findById(id).map(FilmMapper::mapToFilmDto).orElseThrow(() -> new NotFoundException("фильм с данным id не найден"));
+        Film film = repository.findById(id)
+                .orElseThrow(() -> new NotFoundException("фильм не найден"));
+        List<Integer> genreIds = filmGenreRepository.findGenreIdsByFilmId(id);
+        film.setGenres(genreIds.stream().map(Genre::fromId).toList());
+        return FilmMapper.mapToFilmDto(film);
     }
 }

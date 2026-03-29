@@ -11,7 +11,6 @@ import ru.yandex.practicum.filmorate.storage.film.FilmService.FilmService;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage.FilmDbStorage;
 
 import javax.xml.bind.ValidationException;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -51,20 +50,19 @@ public class FilmController {
     }
 
     @GetMapping("/films/popular")
-    public List<Film> getPopularFilms(@RequestParam(defaultValue = "10") int count) {
+    public List<FilmDto> getPopularFilms(@RequestParam(defaultValue = "10") int count) {
         logger.info("Получаем список популярных фильмов");
-        return service.getPopular(count);
+        return service.getPopularFilms(count);
     }
 
     @PutMapping("/films/{id}/like/{userId}")
-    public ArrayList<FilmDto> lickedFilm(@PathVariable("id") int filmId, @PathVariable("userId") int userId) {
+    public void lickedFilm(@PathVariable("id") int filmId, @PathVariable("userId") int userId) {
         logger.info("Добавляем лайк фильму");
-        return service.lickedFilm(userId, filmId);
+         service.lickedFilm(userId, filmId);
     }
 
     @DeleteMapping("/films/{id}/like/{userId}")
-    public ArrayList<FilmDto> deleteFilmFromFavorit(@PathVariable("userId") int userId, @PathVariable("id") int filmId) {
+    public void deleteFilmFromFavorit(@PathVariable("userId") long userId, @PathVariable("id") long filmId) {
         logger.info("Удаляем лайк");
-        return service.deleteFilmFromFavorit(userId, filmId);
     }
 }

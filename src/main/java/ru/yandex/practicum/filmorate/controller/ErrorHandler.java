@@ -5,7 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import ru.yandex.practicum.filmorate.exeptions.NotFoundException; // ← вот этот импорт
+import ru.yandex.practicum.filmorate.exeptions.NotFoundException;
 
 import javax.xml.bind.ValidationException;
 import java.util.Map;
@@ -31,6 +31,6 @@ public class ErrorHandler {
                 "error", "Внутренняя ошибка сервера",
                 "message", e.getMessage()
         );
-        return ResponseEntity.internalServerError().body(error);  // 500
+        return ResponseEntity.internalServerError().body(error);
     }
 }

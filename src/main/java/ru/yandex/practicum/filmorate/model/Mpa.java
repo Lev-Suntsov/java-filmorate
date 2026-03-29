@@ -7,7 +7,7 @@ public enum Mpa {
     R(4, "R"),
     NC_17(5, "NC-17");
 
-    private final int id;
+    private final Integer id;
     private final String name;
 
     Mpa(int id, String name) {

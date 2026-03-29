@@ -9,7 +9,7 @@ public enum Genre {
     DOCUMENTARY(5, "Документальный"),
     ACTION(6, "Боевик");
 
-    private final int id;
+    private final Integer id;
     private final String name;
 
     Genre(int id, String name) {
