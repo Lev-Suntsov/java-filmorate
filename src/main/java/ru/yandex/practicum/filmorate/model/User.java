@@ -8,12 +8,8 @@ import lombok.EqualsAndHashCode;
 
 import java.time.LocalDate;
 
-@Entity
 @Data
-@EqualsAndHashCode(of = "id")
-@Table(name = "users")
 public class User {
-    @Id
     private int id;
     private String email;
     private String login;
