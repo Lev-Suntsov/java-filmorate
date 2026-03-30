@@ -3,10 +3,7 @@ package ru.yandex.practicum.filmorate.storage.film.FilmService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.dal.FilmGenreRepository;
-import ru.yandex.practicum.filmorate.dal.FilmRepository;
-import ru.yandex.practicum.filmorate.dal.LikeRepository;
-import ru.yandex.practicum.filmorate.dal.UserRepository;
+import ru.yandex.practicum.filmorate.dal.*;
 import ru.yandex.practicum.filmorate.dto.FilmDto;
 import ru.yandex.practicum.filmorate.exeptions.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Like;
@@ -24,8 +21,8 @@ public class FilmService {
     UserDbStorage userStorage;
     FilmDbStorage filmStorage;
 
-    public FilmService(FilmRepository repository, UserRepository userRepository, FilmGenreRepository filmGenreRepository, LikeRepository likeRepository) {
-        this.filmStorage = new FilmDbStorage(repository, filmGenreRepository);
+    public FilmService(FilmRepository repository, UserRepository userRepository, FilmGenreRepository filmGenreRepository, LikeRepository likeRepository, GenreRepository genreRepository) {
+        this.filmStorage = new FilmDbStorage(repository, filmGenreRepository, genreRepository);
         this.userStorage = new UserDbStorage(userRepository);
         this.likeRepository = likeRepository;
     }
@@ -35,14 +32,14 @@ public class FilmService {
         userStorage.getUserById(userId);
         filmStorage.getFilmById(filmId);
 
-        if (likeRepository.existsByUserIdAndFilmId(userId, filmId)) {
+        if (likeRepository.exists(userId, filmId)) {
             logger.warn("Пользователь уже поставил фильм в понравившиеся");
             return;
         }
 
         Like like = new Like();
         like.setId(new LikeId(userId, filmId));
-        likeRepository.save(like);
+        likeRepository.addLike(userId, filmId);
     }
 
 
@@ -53,7 +50,7 @@ public class FilmService {
         userStorage.getUserById(userId);
 
         // Проверяем наличие лайка
-        if (!likeRepository.existsByUserIdAndFilmId(userId, filmId)) {
+        if (!likeRepository.exists(userId, filmId)) {
             throw new NotFoundException(
                     String.format("Фильм %d не найден в лайках пользователя %d", filmId, userId)
             );
@@ -61,7 +58,7 @@ public class FilmService {
         }
 
         // Удаляем лайк в рамках транзакции
-        likeRepository.deleteById(filmId);
+        likeRepository.removeLike(userId, filmId);
 
         logger.info("Лайк успешно удалён: пользователь {}, фильм {}", userId, filmId);
     }

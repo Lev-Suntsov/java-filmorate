@@ -28,25 +28,15 @@ public class FilmMapper {
 
         int mpaId = request.getMpa() != null ? request.getMpa().getId() : 0;
         try {
-            film.setMpa(Mpa.fromId(mpaId));
+            if (request.getMpa() != null) {
+                Mpa mpa = new Mpa();
+                mpa.setId(request.getMpa().getId());
+                film.setMpa(mpa);
+            }
         } catch (IllegalArgumentException e) {
             throw new NotFoundException("MPA с id=" + mpaId + " не найден");
         }
 
-        if (request.getGenres() != null) {
-            List<Genre> genres = request.getGenres().stream()
-                    .map(gd -> {
-                        int gid = gd.getId();
-                        try {
-                            return Genre.fromId(gid);
-                        } catch (IllegalArgumentException e) {
-                            throw new NotFoundException("Жанр с id=" + gid + " не найден");
-                        }
-                    })
-                    .toList();
-
-            film.setGenres(normalizeGenres(genres)); // ВАЖНО: присвоить результат
-        }
 
         return film;
     }
@@ -67,23 +57,12 @@ public class FilmMapper {
         }
 
         if (request.hasMpa()) {
-            film.setMpa(Mpa.fromId(request.getMpa().getId()));
+                Mpa mpa = new Mpa();
+                mpa.setId(request.getMpa().getId());
+                film.setMpa(mpa);
         }
 
-        if (request.getGenres() != null) {
-            List<Genre> genres = request.getGenres().stream()
-                    .map(gd -> {
-                        int gid = gd.getId();
-                        try {
-                            return Genre.fromId(gid);
-                        } catch (IllegalArgumentException e) {
-                            throw new NotFoundException("Жанр с id=" + gid + " не найден");
-                        }
-                    })
-                    .toList();
 
-            film.setGenres(normalizeGenres(genres)); // тоже присваиваем
-        }
 
         // валидации как у тебя
 

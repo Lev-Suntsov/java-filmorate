@@ -3,12 +3,10 @@ package ru.yandex.practicum.filmorate.mappers;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Mpa;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.List;
 
 @Component
 public class FilmRowMapper implements RowMapper<Film> {
@@ -21,18 +19,14 @@ public class FilmRowMapper implements RowMapper<Film> {
         film.setReleaseDate(rs.getDate("releaseDate").toLocalDate());
         film.setDuration(rs.getInt("duration"));
 
-        // mpa: колонка mpa (int)
         int mpaId = rs.getInt("mpa");
-        film.setMpa(Mpa.fromId(mpaId));
-
-        // genre: один жанр из колонки genre (int)
-        int genreId = rs.getInt("genre");
-        if (!rs.wasNull() && genreId > 0) {
-            film.setGenres(List.of(Genre.fromId(genreId)));
+        if (!rs.wasNull()) {
+            Mpa mpa = new Mpa();
+            mpa.setId(mpaId);
+            film.setMpa(mpa);
         } else {
-            film.setGenres(List.of()); // или null
+            film.setMpa(null);
         }
-        ;
 
         return film;
     }

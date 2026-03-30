@@ -10,23 +10,23 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/genres")
-public class GenerController {
-    private static final Logger log = LoggerFactory.getLogger(GenerController.class);
+public class GenreController {
+    private static final Logger log = LoggerFactory.getLogger(GenreController.class);
     private final GenreService service;
 
-    public GenerController(GenreService genreService) {
+    public GenreController(GenreService genreService) {
         this.service = genreService;
     }
 
     @GetMapping
     public List<GenreDto> getAll() {
-        log.info("получаем список всех жанров");
-        return service.getGenres();
+        log.info("Получаем список всех жанров");
+        return service.findAll();
     }
 
-    @GetMapping("{id}")
+    @GetMapping("/{id}")
     public GenreDto getById(@PathVariable int id) {
-        log.info("получаем жанр по id");
+        log.info("Получаем жанр по id {}", id);
         return service.getGenreById(id);
     }
 }

@@ -3,10 +3,11 @@ package ru.yandex.practicum.filmorate.controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.dto.MpaDto;
+import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.storage.Mpa.MpaService;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/mpa")
@@ -19,12 +20,12 @@ public class MpaController {
     }
 
     @GetMapping
-    public List<MpaDto> getAll() {
+    public List<Mpa> getAll() {
         return service.getAll();
     }
 
     @GetMapping("/{id}")
-    public MpaDto getById(@PathVariable int id) {
+    public Optional<Mpa> getById(@PathVariable int id) {
         log.info("Получаем рейтинг MPA по id={}", id);
         return service.getById(id);
     }

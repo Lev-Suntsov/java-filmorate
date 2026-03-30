@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.dal.FilmGenreRepository;
 import ru.yandex.practicum.filmorate.dal.FilmRepository;
+import ru.yandex.practicum.filmorate.dal.GenreRepository;
 import ru.yandex.practicum.filmorate.dto.FilmDto;
 import ru.yandex.practicum.filmorate.dto.NewFilmRequest;
 import ru.yandex.practicum.filmorate.dto.UpdateFilmRequest;
@@ -16,17 +17,21 @@ import ru.yandex.practicum.filmorate.model.Genre;
 import javax.xml.bind.ValidationException;
 import java.time.LocalDate;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Repository
 public class FilmDbStorage implements FilmStorage {
     private static final Logger logger = LoggerFactory.getLogger(FilmDbStorage.class);
     FilmRepository repository;
     FilmGenreRepository filmGenreRepository;
+    GenreRepository genreRepository;
 
-    public FilmDbStorage(FilmRepository repository, FilmGenreRepository filmGenreRepository) {
+    public FilmDbStorage(FilmRepository repository, FilmGenreRepository filmGenreRepository, GenreRepository genreRepository) {
         this.repository = repository;
         this.filmGenreRepository = filmGenreRepository;
+        this.genreRepository = genreRepository;
     }
 
     @Override
@@ -108,8 +113,16 @@ public class FilmDbStorage implements FilmStorage {
     public FilmDto getFilmById(long id) {
         Film film = repository.findById(id)
                 .orElseThrow(() -> new NotFoundException("фильм не найден"));
+
         List<Integer> genreIds = filmGenreRepository.findGenreIdsByFilmId(id);
-        film.setGenres(genreIds.stream().map(Genre::fromId).toList());
+
+        if (!genreIds.isEmpty()) {
+            Set<Genre> genres = genreRepository.findByIds(genreIds);
+            film.setGenres(genres);
+        } else {
+            film.setGenres(new HashSet<>());
+        }
+
         return FilmMapper.mapToFilmDto(film);
     }
 }

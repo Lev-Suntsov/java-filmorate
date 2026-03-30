@@ -2,16 +2,16 @@ DELETE FROM film_genres;
 DELETE FROM likes;
 DELETE FROM films;
 DELETE FROM genres;
-DELETE FROM mpa_rating;
+DELETE FROM mpa;
 
-INSERT INTO mpa_rating(rating_id, name)
+INSERT INTO mpa(id, name)
 VALUES (1, '0+'),
        (2, '6+'),
        (3, '12+'),
        (4, '16+'),
        (5, '18+');
 
-INSERT INTO genres(genre_id, name)
+INSERT INTO genres(id, name)
 VALUES (1, 'Комедия'),
        (2, 'Драма'),
        (3, 'Мультфильм'),
