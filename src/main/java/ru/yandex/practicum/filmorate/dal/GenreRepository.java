@@ -1,36 +1,32 @@
 package ru.yandex.practicum.filmorate.dal;
 
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.model.Genre;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Repository
 public class GenreRepository extends BasRepository<Genre> {
     private static final String FIND_ALL_QUERY = "SELECT id, name FROM genres ORDER BY id";
-    private static final String FIND_BY_ID_QUERY = "SELECT id, name FROM genres WHERE id = ?";
 
-    public GenreRepository(JdbcTemplate jdbc, RowMapper<Genre> mapper) {
-        super(jdbc, mapper);
+    public GenreRepository(JdbcTemplate jdbc) {
+        super(jdbc, (rs, rowNum) -> {
+            Genre genre = new Genre();
+            genre.setId(rs.getInt("id"));
+            genre.setName(rs.getString("name"));
+            return genre;
+        });
     }
 
     public List<Genre> findAll() {
         return findMany(FIND_ALL_QUERY);
     }
 
-    public Optional<Genre> findById(int id) {
-        return findOne(FIND_BY_ID_QUERY, id);
-    }
-
     public Set<Genre> findByIds(List<Integer> ids) {
         if (ids == null || ids.isEmpty()) {
-            return new HashSet<>();
+            return new LinkedHashSet<>();
         }
 
         String placeholders = ids.stream()
@@ -39,6 +35,12 @@ public class GenreRepository extends BasRepository<Genre> {
 
         String sql = "SELECT id, name FROM genres WHERE id IN (" + placeholders + ") ORDER BY id";
 
-        return new HashSet<>(findMany(sql, ids.toArray()));
+        return findMany(sql, ids.toArray()).stream()
+                .collect(Collectors.toCollection(LinkedHashSet::new));
+    }
+
+    public Optional<Genre> findById(int id) {
+        String sql = "SELECT id, name FROM genres WHERE id = ?";
+        return findOne(sql, id);
     }
 }

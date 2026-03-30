@@ -39,4 +39,8 @@ public class UpdateFilmRequest {
     public boolean hasDuration() {
         return duration != null;
     }
+
+    public boolean hasGenres() {
+        return  genres != null;
+    }
 }

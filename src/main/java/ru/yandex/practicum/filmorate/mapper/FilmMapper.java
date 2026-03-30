@@ -2,22 +2,19 @@ package ru.yandex.practicum.filmorate.mapper;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.LinkedHashSet;
 import ru.yandex.practicum.filmorate.dto.*;
-import ru.yandex.practicum.filmorate.exeptions.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Mpa;
 
 import javax.xml.bind.ValidationException;
 import java.util.Comparator;
-import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class FilmMapper {
-    static final Logger logger = LoggerFactory.getLogger(FilmMapper.class);
 
     public static Film mapToFilm(NewFilmRequest request) {
         Film film = new Film();
@@ -26,56 +23,58 @@ public class FilmMapper {
         film.setReleaseDate(request.getReleaseDate());
         film.setDuration(request.getDuration());
 
-        int mpaId = request.getMpa() != null ? request.getMpa().getId() : 0;
-        try {
-            if (request.getMpa() != null) {
-                Mpa mpa = new Mpa();
-                mpa.setId(request.getMpa().getId());
-                film.setMpa(mpa);
-            }
-        } catch (IllegalArgumentException e) {
-            throw new NotFoundException("MPA с id=" + mpaId + " не найден");
+        if (request.getMpa() != null) {
+            Mpa mpa = new Mpa();
+            mpa.setId(request.getMpa().getId());
+            film.setMpa(mpa);
         }
 
+        if (request.getGenres() != null) {
+            Set<Genre> genres = request.getGenres().stream()
+                    .map(g -> {
+                        Genre genre = new Genre();
+                        genre.setId(g.getId());
+                        return genre;
+                    })
+                    .collect(Collectors.toCollection(LinkedHashSet::new));
+            film.setGenres(genres);
+        } else {
+            film.setGenres(new LinkedHashSet<>());
+        }
 
         return film;
     }
-
-
 
     public static Film updateFilm(Film film, UpdateFilmRequest request) throws ValidationException {
         if (request.hasName()) {
             film.setName(request.getName());
         }
-
         if (request.hasDescription()) {
             film.setDescription(request.getDescription());
         }
-
         if (request.hasReleaseDate()) {
             film.setReleaseDate(request.getReleaseDate());
         }
-
-        if (request.hasMpa()) {
-                Mpa mpa = new Mpa();
-                mpa.setId(request.getMpa().getId());
-                film.setMpa(mpa);
-        }
-
-
-
-        // валидации как у тебя
-
         if (request.hasDuration()) {
             film.setDuration(request.getDuration());
         }
-        if (film.getDuration() == null || film.getDuration() <= 0) {
-            throw new ValidationException("Продолжительность фильма должна быть положительной");
+        if (request.hasMpa()) {
+            Mpa mpa = new Mpa();
+            mpa.setId(request.getMpa().getId());
+            film.setMpa(mpa);
         }
-
+        if (request.hasGenres()) {
+            Set<Genre> genres = request.getGenres().stream()
+                    .map(g -> {
+                        Genre genre = new Genre();
+                        genre.setId(g.getId());
+                        return genre;
+                    })
+                    .collect(Collectors.toCollection(LinkedHashSet::new));
+            film.setGenres(genres);
+        }
         return film;
     }
-
 
     public static FilmDto mapToFilmDto(Film film) {
         FilmDto dto = new FilmDto();
@@ -84,38 +83,12 @@ public class FilmMapper {
         dto.setDescription(film.getDescription());
         dto.setReleaseDate(film.getReleaseDate());
         dto.setDuration(film.getDuration());
-
-        if (film.getMpa() != null) {
-            MpaDto mpaDto = new MpaDto();
-            mpaDto.setId(film.getMpa().getId());
-            mpaDto.setName(film.getMpa().getName());
-            dto.setMpa(mpaDto);
-        }
-
-        if (film.getGenres() != null) {
-            dto.setGenres(
-                    film.getGenres().stream()
-                            .map(g -> {
-                                GenreDto gd = new GenreDto();
-                                gd.setId(g.getId());
-                                gd.setName(g.getName());
-                                return gd;
-                            })
-                            .toList()
-            );
-        }
-
+        dto.setMpa(film.getMpa());
+        dto.setGenres(film.getGenres() == null
+                ? new LinkedHashSet<>()
+                : film.getGenres().stream()
+                .sorted(Comparator.comparing(Genre::getId))
+                .collect(Collectors.toCollection(LinkedHashSet::new)));
         return dto;
     }
-
-    private static List<Genre> normalizeGenres(List<Genre> genres) {
-        if (genres == null) {
-            return null;
-        }
-        return genres.stream()
-                .collect(Collectors.toMap(Genre::getId, g -> g, (a, b) -> a)) // убираем дубли
-                .values().stream()
-                .sorted(Comparator.comparingInt(Genre::getId))               // сортируем по id
-                .toList();
-    }
-    }
+}
