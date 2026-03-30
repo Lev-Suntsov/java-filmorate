@@ -1,8 +1,11 @@
 package ru.yandex.practicum.filmorate.dal;
 
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collections;
 import java.util.List;
 
 @Repository
@@ -25,8 +28,11 @@ public class LikeRepository {
     private static final String FIND_FILM_IDS_BY_USER_QUERY =
             "SELECT film_id FROM likes WHERE user_id = ?";
 
-    public LikeRepository(JdbcTemplate jdbc) {
+    private final NamedParameterJdbcTemplate namedJdbc;
+
+    public LikeRepository(JdbcTemplate jdbc, NamedParameterJdbcTemplate namedJdbc) {
         this.jdbc = jdbc;
+        this.namedJdbc = namedJdbc;
     }
 
     public void addLike(Long userId, Long filmId) {
@@ -42,10 +48,23 @@ public class LikeRepository {
         return count != null && count > 0;
     }
 
-    public long countLikesByFilmId(Long filmId) {
-        Integer count = jdbc.queryForObject(COUNT_BY_FILM_QUERY, Integer.class, filmId);
-        return count == null ? 0 : count;
+    public List<Object[]> countLikesByFilmIds(List<Integer> filmIds) {
+        if (filmIds.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        // В SQL используем именованный параметр :ids
+        String sql = "SELECT film_id, COUNT(user_id) FROM likes WHERE film_id IN (:ids) GROUP BY film_id";
+
+        MapSqlParameterSource parameters = new MapSqlParameterSource("ids", filmIds);
+
+        return namedJdbc.query(sql, parameters, (rs, rowNum) -> new Object[] {
+                rs.getLong(1), // film_id
+                rs.getLong(2)  // count
+        });
     }
+
+
 
     public List<Long> findFilmIdsByUserId(Long userId) {
         return jdbc.queryForList(FIND_FILM_IDS_BY_USER_QUERY, Long.class, userId);

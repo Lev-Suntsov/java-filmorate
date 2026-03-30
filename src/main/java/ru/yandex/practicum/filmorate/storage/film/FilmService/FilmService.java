@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.dal.*;
 import ru.yandex.practicum.filmorate.dto.FilmDto;
 import ru.yandex.practicum.filmorate.exeptions.NotFoundException;
+import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Like;
 import ru.yandex.practicum.filmorate.model.LikeId;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage.FilmDbStorage;
@@ -46,10 +47,8 @@ public class FilmService {
     public void unlikeFilm(Long userId, Long filmId) {
         logger.info("Удаление лайка: пользователь {} для фильма {}", userId, filmId);
 
-        // Проверяем существование пользователя
         userStorage.getUserById(userId);
 
-        // Проверяем наличие лайка
         if (!likeRepository.exists(userId, filmId)) {
             throw new NotFoundException(
                     String.format("Фильм %d не найден в лайках пользователя %d", filmId, userId)
@@ -57,7 +56,6 @@ public class FilmService {
 
         }
 
-        // Удаляем лайк в рамках транзакции
         likeRepository.removeLike(userId, filmId);
 
         logger.info("Лайк успешно удалён: пользователь {}, фильм {}", userId, filmId);
@@ -65,19 +63,41 @@ public class FilmService {
 
 
     public List<FilmDto> getPopularFilms(int count) {
+        if (count <= 0) {
+            return Collections.emptyList();
+        }
         logger.info("Получаем топ-{} популярных фильмов", count);
-        return filmStorage.getFilms().stream()
-                .map(film -> filmStorage.getFilmById(film.getId()))
+
+        List<Film> films =new ArrayList<>(filmStorage.getFilms());
+        if (films.isEmpty()) {
+            return Collections.emptyList();
+        }
+        List<Integer> filmIds = films.stream()
+                .map(Film::getId)
+                .collect(Collectors.toList());
+
+        List<Object[]> likesData = likeRepository.countLikesByFilmIds(filmIds);
+
+        Map<Long, Long> likesCount = likesData.stream()
+                .collect(Collectors.toMap(
+                        row -> ((Number) row[0]).longValue(), // ID фильма
+                        row -> ((Number) row[1]).longValue()  // Кол-во лайков
+                ));
+
+
+
+        return films.stream()
                 .sorted((f1, f2) -> Long.compare(
-                        likeRepository.countLikesByFilmId(Long.getLong(f2.getId().toString())),
-                        likeRepository.countLikesByFilmId(Long.getLong(f1.getId().toString()))
+                        likesCount.getOrDefault(f2.getId(), 0L),
+                        likesCount.getOrDefault(f1.getId(), 0L)
                 ))
                 .limit(count)
+                .map(film -> filmStorage.getFilmById(film.getId()))
                 .collect(Collectors.toList());
     }
 
-    public List<Long> getUserLikedFilms(long userId) {
-        return likeRepository.findFilmIdsByUserId(userId);
-    }
+        public List<Long> getUserLikedFilms ( long userId){
+            return likeRepository.findFilmIdsByUserId(userId);
+        }
 }
 
