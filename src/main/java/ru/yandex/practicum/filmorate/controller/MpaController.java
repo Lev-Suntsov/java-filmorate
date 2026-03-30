@@ -8,7 +8,6 @@ import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.storage.Mpa.MpaService;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/mpa")
