@@ -68,10 +68,12 @@ public class FilmService {
         }
         logger.info("Получаем топ-{} популярных фильмов", count);
 
-        List<Film> films =new ArrayList<>(filmStorage.getFilms());
+        List<Film> films = new ArrayList<>(filmStorage.getFilms());
+
         if (films.isEmpty()) {
             return Collections.emptyList();
         }
+
         List<Integer> filmIds = films.stream()
                 .map(Film::getId)
                 .collect(Collectors.toList());
@@ -96,7 +98,7 @@ public class FilmService {
                 .collect(Collectors.toList());
     }
 
-        public List<Long> getUserLikedFilms ( long userId){
+        public List<Long> getUserLikedFilms(long userId) {
             return likeRepository.findFilmIdsByUserId(userId);
         }
 }
