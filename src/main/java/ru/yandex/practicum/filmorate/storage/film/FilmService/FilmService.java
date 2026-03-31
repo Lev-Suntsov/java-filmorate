@@ -2,25 +2,25 @@ package ru.yandex.practicum.filmorate.storage.film.FilmService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.dal.*;
 import ru.yandex.practicum.filmorate.dto.FilmDto;
 import ru.yandex.practicum.filmorate.exeptions.NotFoundException;
-import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Like;
 import ru.yandex.practicum.filmorate.model.LikeId;
+import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage.FilmDbStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage.UserDbStorage;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class FilmService {
     private static final Logger logger = LoggerFactory.getLogger(FilmService.class);
     private final LikeRepository likeRepository;
-    UserDbStorage userStorage;
-    FilmDbStorage filmStorage;
+    private final UserDbStorage userStorage;
+    private final FilmDbStorage filmStorage;
 
     public FilmService(FilmRepository repository, UserRepository userRepository, FilmGenreRepository filmGenreRepository, LikeRepository likeRepository, GenreRepository genreRepository) {
         this.filmStorage = new FilmDbStorage(repository, filmGenreRepository, genreRepository);
@@ -62,40 +62,48 @@ public class FilmService {
     }
 
 
+
     public List<FilmDto> getPopularFilms(int count) {
         if (count <= 0) {
             return Collections.emptyList();
         }
+
         logger.info("Получаем топ-{} популярных фильмов", count);
 
-        List<Film> films = new ArrayList<>(filmStorage.getFilms());
+        String sql = """
+        SELECT f.id, f.name, f.description, f.releaseDate, f.duration,
+               f.mpa AS mpa_id, m.name AS mpa_name,
+               COUNT(l.user_id) AS likes_count
+        FROM films f
+        LEFT JOIN mpa m ON f.mpa = m.id
+        LEFT JOIN likes l ON f.id = l.film_id
+        GROUP BY f.id, f.name, f.description, f.releaseDate, f.duration, f.mpa, m.name
+        ORDER BY likes_count DESC NULLS LAST
+        LIMIT ?
+        """;
+        JdbcTemplate jdbc = new JdbcTemplate();
 
-        if (films.isEmpty()) {
-            return Collections.emptyList();
-        }
+        List<FilmDto> films = jdbc.query(sql, (rs, rowNum) -> {
+            FilmDto film = new FilmDto();
+            film.setId(rs.getInt("id"));
+            film.setName(rs.getString("name"));
+            film.setDescription(rs.getString("description"));
+            film.setReleaseDate(rs.getDate("releaseDate").toLocalDate());
+            film.setDuration(rs.getInt("duration"));
 
-        List<Integer> filmIds = films.stream()
-                .map(Film::getId)
-                .collect(Collectors.toList());
+            int mpaId = rs.getInt("mpa_id");
+            if (!rs.wasNull()) {
+                Mpa mpa = new Mpa();
+                mpa.setId(mpaId);
+                mpa.setName(rs.getString("mpa_name"));
+                film.setMpa(mpa);
+            }
 
-        List<Object[]> likesData = likeRepository.countLikesByFilmIds(filmIds);
+            film.setGenres(new LinkedHashSet<>());
+            return film;
+        }, count);
 
-        Map<Long, Long> likesCount = likesData.stream()
-                .collect(Collectors.toMap(
-                        row -> ((Number) row[0]).longValue(), // ID фильма
-                        row -> ((Number) row[1]).longValue()  // Кол-во лайков
-                ));
-
-
-
-        return films.stream()
-                .sorted((f1, f2) -> Long.compare(
-                        likesCount.getOrDefault(f2.getId(), 0L),
-                        likesCount.getOrDefault(f1.getId(), 0L)
-                ))
-                .limit(count)
-                .map(film -> filmStorage.getFilmById(film.getId()))
-                .collect(Collectors.toList());
+        return films;
     }
 
         public List<Long> getUserLikedFilms(long userId) {

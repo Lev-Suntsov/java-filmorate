@@ -19,7 +19,7 @@ import java.util.Collection;
 @Repository
 public class UserDbStorage implements UserStorage {
     private static final Logger logger = LoggerFactory.getLogger(UserDbStorage.class);
-    UserRepository repository;
+    private final UserRepository repository;
 
     public UserDbStorage(UserRepository repository) {
         this.repository = repository;
