@@ -11,7 +11,7 @@ import java.util.Collection;
 public interface FilmStorage {
     public Collection<Film> getFilms();
 
-    public FilmDto addFilm(NewFilmRequest request) throws RuntimeException;
+    public FilmDto addFilm(NewFilmRequest request) throws RuntimeException, ValidationException;
 
     public FilmDto updateFilm(long id, UpdateFilmRequest request) throws ValidationException;
 

@@ -44,13 +44,21 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     @Override
-    public FilmDto addFilm(NewFilmRequest request) {
-        logger.info("переходим в метод добавления фильма");
+    public FilmDto addFilm(NewFilmRequest request) throws ValidationException {
+        validateFilmRequest(request);
 
         Film film = FilmMapper.mapToFilm(request);
 
+        validateMpaAndGenres(film);
+
         film = repository.save(film);
-        filmGenreRepository.saveForFilm(film.getId(), extractGenreIds(film));
+
+        List<Integer> genreIds = film.getGenres().stream()
+                .map(Genre::getId)
+                .distinct()
+                .toList();
+
+        filmGenreRepository.saveForFilm(film.getId(), genreIds);
 
         return getFilmById(film.getId());
     }
