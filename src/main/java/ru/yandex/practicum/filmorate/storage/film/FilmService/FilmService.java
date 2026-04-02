@@ -11,6 +11,7 @@ import ru.yandex.practicum.filmorate.model.Like;
 import ru.yandex.practicum.filmorate.model.LikeId;
 import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage.FilmDbStorage;
+import ru.yandex.practicum.filmorate.storage.film.FilmStorage.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage.UserDbStorage;
 
 import java.util.*;
@@ -21,11 +22,14 @@ public class FilmService {
     private final LikeRepository likeRepository;
     private final UserDbStorage userStorage;
     private final FilmDbStorage filmStorage;
+    private final JdbcTemplate jdbc;
 
-    public FilmService(FilmRepository repository, UserRepository userRepository, FilmGenreRepository filmGenreRepository, LikeRepository likeRepository, GenreRepository genreRepository) {
+    public FilmService(FilmRepository repository, UserRepository userRepository, FilmGenreRepository filmGenreRepository,
+                       LikeRepository likeRepository, GenreRepository genreRepository, JdbcTemplate jdbc) {
         this.filmStorage = new FilmDbStorage(repository, filmGenreRepository, genreRepository);
         this.userStorage = new UserDbStorage(userRepository);
         this.likeRepository = likeRepository;
+        this.jdbc = jdbc;
     }
 
     public void lickedFilm(long userId, long filmId) {
@@ -81,7 +85,6 @@ public class FilmService {
         ORDER BY likes_count DESC NULLS LAST
         LIMIT ?
         """;
-        JdbcTemplate jdbc = new JdbcTemplate();
 
         List<FilmDto> films = jdbc.query(sql, (rs, rowNum) -> {
             FilmDto film = new FilmDto();
